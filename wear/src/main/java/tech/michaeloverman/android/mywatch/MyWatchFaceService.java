@@ -44,8 +44,9 @@ import java.util.concurrent.TimeUnit;
  * low-bit ambient mode, the text is drawn without anti-aliasing in ambient mode.
  */
 public class MyWatchFaceService extends CanvasWatchFaceService {
-    private static final Typeface NORMAL_TYPEFACE =
-            Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
+    private static final Typeface HOUR_TYPEFACE =
+            Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
+    private static final Typeface MINUTE_TYPEFACE = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
 
     /**
      * Update rate in milliseconds for interactive mode. We update once a second since seconds are
@@ -112,10 +113,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mBackgroundPaint.setColor(resources.getColor(R.color.background));
 
             mHoursPaint = new Paint();
-            mHoursPaint = createTextPaint(resources.getColor(R.color.hour_text));
+            mHoursPaint = createTextPaint(resources.getColor(R.color.hour_text), HOUR_TYPEFACE);
 
             mMinutesPaint = new Paint();
-            mMinutesPaint = createTextPaint(resources.getColor(R.color.minute_text));
+            mMinutesPaint = createTextPaint(resources.getColor(R.color.minute_text), MINUTE_TYPEFACE);
 
             mTime = new Time();
         }
@@ -126,10 +127,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             super.onDestroy();
         }
 
-        private Paint createTextPaint(int textColor) {
+        private Paint createTextPaint(int textColor, Typeface type) {
             Paint paint = new Paint();
             paint.setColor(textColor);
-            paint.setTypeface(NORMAL_TYPEFACE);
+            paint.setTypeface(type);
             paint.setAntiAlias(true);
             return paint;
         }
@@ -247,21 +248,26 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
             mTime.setToNow();
+            // some lines to test various times - BE SURE TO DELETE THESE!!!!
+
 /*            String text = mAmbient
                     ? String.format("%d:%02d", mTime.hour, mTime.minute)
                     : String.format("%d:%02d:%02d", mTime.hour, mTime.minute, mTime.second);
 */
             int localHour = mTime.hour;
             if (localHour > 12) localHour -= 12;
+            if (localHour == 0) localHour = 12;
             String hour = String.format("%d", localHour);
             String minute = String.format("%02d", mTime.minute);
 
             float hourRot = (float) (mTime.hour * Math.PI * 2 / 12);
-            float hourX = mHourCenterX + ((float) Math.sin(hourRot) * mSmallRadius);
-            float hourY = mHourCenterY + ((float) -Math.cos(hourRot) * mSmallRadius);
             float minuteRot = (float) (mTime.minute * Math.PI * 2 / 60);
-            float minuteX = mMinuteCenterX + ((float) Math.sin(minuteRot) * mSmallRadius);
-            float minuteY = mMinuteCenterY + ((float) -Math.cos(minuteRot) * mSmallRadius);
+            float hourX = (float) ((mHourCenterX + ((float) Math.sin(hourRot) * mSmallRadius))
+                    - (Math.sin(minuteRot + 1) * 0.5));
+            float hourY = (float) ((mHourCenterY + ((float) -Math.cos(hourRot) * mSmallRadius))
+                                - ((Math.cos(minuteRot - Math.PI) + 1)));
+            float minuteX = mHourCenterX + ((float) Math.sin(minuteRot) * mSmallRadius);
+            float minuteY = mHourCenterY + ((float) -Math.cos(minuteRot) * mSmallRadius);
 
 
             canvas.drawText(hour, hourX, hourY, mHoursPaint);
@@ -307,8 +313,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             float centerX = width / 2f;
             float centerY = height / 2f;
-            mHourCenterX = centerX - 10f;
-            mHourCenterY = centerY - 10f;
+            mHourCenterX = centerX;
+            mHourCenterY = centerY;
             mMinuteCenterX = centerX + 10f;
             mMinuteCenterY = centerY + 10f;
             mSmallRadius = (float) (centerX * 0.5);
