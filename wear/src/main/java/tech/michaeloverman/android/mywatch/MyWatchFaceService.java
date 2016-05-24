@@ -72,6 +72,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         Paint mBackgroundPaint;
         Paint mHoursPaint;
         Paint mMinutesPaint;
+        Paint mSecondsPaint;
+
         boolean mAmbient;
         Time mTime;
         final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
@@ -89,7 +91,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         float mHourCenterY;
         float mMinuteCenterX;
         float mMinuteCenterY;
-        float mSmallRadius;
+        float mHourRadius;
+        float mMinuteRadius;
+        float mSecondRadius;
+        float mTextSize;
 
         /**
          * Whether the display supports fewer bits for each color in ambient mode. When true, we
@@ -118,6 +123,9 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mMinutesPaint = new Paint();
             mMinutesPaint = createTextPaint(resources.getColor(R.color.minute_text), MINUTE_TYPEFACE);
 
+            mSecondsPaint = new Paint();
+            mSecondsPaint.setColor(Color.WHITE);
+
             mTime = new Time();
         }
 
@@ -131,6 +139,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             Paint paint = new Paint();
             paint.setColor(textColor);
             paint.setTypeface(type);
+//            paint.setStrokeCap(Paint.Cap.ROUND);
             paint.setAntiAlias(true);
             return paint;
         }
@@ -180,11 +189,12 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             boolean isRound = insets.isRound();
             mXOffset = resources.getDimension(isRound
                     ? R.dimen.digital_x_offset_round : R.dimen.digital_x_offset);
-            float textSize = resources.getDimension(isRound
+            mTextSize = resources.getDimension(isRound
                     ? R.dimen.digital_text_size_round : R.dimen.digital_text_size);
 
-            mHoursPaint.setTextSize(textSize);
-            mMinutesPaint.setTextSize(textSize - 15);
+            mHoursPaint.setTextSize(mTextSize + 15);
+            mMinutesPaint.setTextSize(mTextSize - 15);
+            mSecondsPaint.setTextSize(mTextSize - 30);
         }
 
         @Override
@@ -242,8 +252,11 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             // Draw the background.
             if (isInAmbientMode()) {
                 canvas.drawColor(Color.BLACK);
+//                canvas.drawLine(0.0f, 0.0f, 350f, 350f, mExperimentPaint);
             } else {
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
+//                canvas.drawPoint(mHourCenterX, mHourCenterY, mExperimentPaint);
+//                canvas.drawPoint(bounds.width() / 2, bounds.height() / 2, mExperimentPaint);
             }
 
             // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
@@ -262,17 +275,27 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             float hourRot = (float) (mTime.hour * Math.PI * 2 / 12);
             float minuteRot = (float) (mTime.minute * Math.PI * 2 / 60);
-            float hourX = (float) ((mHourCenterX + ((float) Math.sin(hourRot) * mSmallRadius))
-                    - (Math.sin(minuteRot + 1) * 0.5));
-            float hourY = (float) ((mHourCenterY + ((float) -Math.cos(hourRot) * mSmallRadius))
-                                - ((Math.cos(minuteRot - Math.PI) + 1)));
-            float minuteX = mHourCenterX + ((float) Math.sin(minuteRot) * mSmallRadius);
-            float minuteY = mHourCenterY + ((float) -Math.cos(minuteRot) * mSmallRadius);
-
+            float hourX = (float) ((mHourCenterX + ( Math.sin(hourRot) * mHourRadius))
+                    - (0.5 * mHoursPaint.measureText(hour)));
+            float hourY = (float) ((mHourCenterY + ( -Math.cos(hourRot) * mHourRadius))
+                    + (0.4 * mHoursPaint.getTextSize()));
+            float minuteX = (float) ((mHourCenterX + ( Math.sin(minuteRot) * mMinuteRadius))
+                    - (0.5 * mMinutesPaint.measureText(minute)));
+            float minuteY = (float) ((mHourCenterY + ( -Math.cos(minuteRot) * mMinuteRadius))
+                    + (0.4 * mMinutesPaint.getTextSize()));
 
             canvas.drawText(hour, hourX, hourY, mHoursPaint);
             canvas.drawText(minute, minuteX, minuteY, mMinutesPaint);
 
+            if (!isInAmbientMode()) {
+                String second = String.format("%02d", mTime.second);
+                float secondRot = (float) (mTime.second * Math.PI * 2 / 60);
+                float secondX = (float) ((mHourCenterX + ( Math.sin(secondRot) * mSecondRadius))
+                        - (0.5 * mSecondsPaint.measureText(second)));
+                float secondY = (float) ((mHourCenterY + ( -Math.cos(secondRot) * mSecondRadius))
+                        + (0.4 * mSecondsPaint.getTextSize()));
+                canvas.drawText(second, secondX, secondY, mSecondsPaint);
+            }
         }
 
         /**
@@ -313,11 +336,14 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             float centerX = width / 2f;
             float centerY = height / 2f;
+
             mHourCenterX = centerX;
             mHourCenterY = centerY;
             mMinuteCenterX = centerX + 10f;
             mMinuteCenterY = centerY + 10f;
-            mSmallRadius = (float) (centerX * 0.5);
+            mHourRadius = (float) (centerX * 0.65);
+            mMinuteRadius = (float) (centerX * 0.60);
+            mSecondRadius = (float) (centerX * 0.50);
         }
     }
 
