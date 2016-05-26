@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">MyWatch</string>
+    <string name="app_name">Look Ma, No Hands! Settings</string>
+    <string name="mywatch_config">Configure Watch Face</string>
 </resources>

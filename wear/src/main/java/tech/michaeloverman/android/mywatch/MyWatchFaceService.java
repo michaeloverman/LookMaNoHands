@@ -26,6 +26,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -67,6 +69,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
 
     private class Engine extends CanvasWatchFaceService.Engine {
+
+        private SensorManager mSensorManager;
+        private Sensor mSensor;
+
         final Handler mUpdateTimeHandler = new EngineHandler(this);
         boolean mRegisteredTimeZoneReceiver = false;
         Paint mBackgroundPaint;
@@ -100,6 +106,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
          * disable anti-aliasing in ambient mode.
          */
         boolean mLowBitAmbient;
+        private Paint mStepsPaint;
+        private int mStepCount;
 
         @Override
         public void onCreate(SurfaceHolder holder) {
@@ -118,6 +126,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             mHoursPaint = new Paint();
             mHoursPaint = createTextPaint(resources.getColor(R.color.clemson_hour_text), HOUR_TYPEFACE);
+            mHoursPaint.setLetterSpacing(-0.15f);
 
             mMinutesPaint = new Paint();
             mMinutesPaint = createTextPaint(resources.getColor(R.color.clemson_minute_text), MINUTE_TYPEFACE);
@@ -126,6 +135,12 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mSecondsPaint.setColor(Color.WHITE);
 
             mTime = new Time();
+
+            mStepsPaint = new Paint();
+            mStepsPaint = createTextPaint(Color.WHITE, MINUTE_TYPEFACE);
+
+            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         }
 
         @Override
@@ -194,6 +209,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mHoursPaint.setTextSize(mTextSize);
             mMinutesPaint.setTextSize(mTextSize * 0.5f);
             mSecondsPaint.setTextSize(mTextSize * 0.3f);
+            mStepsPaint.setTextSize(15f);
         }
 
         @Override
@@ -285,6 +301,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             canvas.drawText(hour, hourX, hourY, mHoursPaint);
             canvas.drawText(minute, minuteX, minuteY, mMinutesPaint);
+
+
+            canvas.drawText("7777", mCenterX - mStepsPaint.measureText("7777") * 0.5f,
+                    mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
 
             if (!isInAmbientMode() && mShowSeconds) {
                 String second = String.format("%02d", mTime.second);
