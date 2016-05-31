@@ -1,7 +1,10 @@
 package tech.michaeloverman.android.mywatch;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +15,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 
 /**
@@ -22,6 +28,7 @@ public class MyWatchConfigActivity extends Activity
         GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<DataApi.DataItemResult> {
 
+    private static final String PATH_WITH_FEATURE = "/mywatch_config/MyWatch";
     private String watchFacePeerId;
     private ComponentName mComponentName;
     private GoogleApiClient myGoogleApiClient;
@@ -59,10 +66,32 @@ public class MyWatchConfigActivity extends Activity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (watchFacePeerId != null) {
-            // do these things
+            Uri.Builder uriBuilder = new Uri.Builder();
+            Uri uri = uriBuilder.scheme("wear")
+                    .path(PATH_WITH_FEATURE)
+                    .authority(watchFacePeerId)
+                    .build();
+            Wearable.DataApi.getDataItem(myGoogleApiClient, uri).setResultCallback(this);
+
         } else {
-            // Do this if there's no connection
+            noConnectedDeviceDialog();
         }
+    }
+
+    private void noConnectedDeviceDialog() {
+        String noConnectText = getResources().getString(R.string.no_connected_device);
+        String okButtonLabel = getResources().getString(R.string.ok_button_label);
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder.setMessage(noConnectText)
+                .setCancelable(false)
+                .setPositiveButton(okButtonLabel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        AlertDialog alertDialog = alertBuilder.create();
+        alertDialog.show();
     }
 
     @Override
@@ -72,11 +101,17 @@ public class MyWatchConfigActivity extends Activity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        
     }
 
     @Override
     public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
+        if (dataItemResult.getStatus().isSuccess() && dataItemResult.getDataItem() != null) {
+            DataItem configDataItem = dataItemResult.getDataItem();
+            DataMapItem dataMapItem = DataMapItem.fromDataItem(configDataItem);
+            DataMap configDataMap = dataMapItem.getDataMap();
+        } else {
 
+        }
     }
 }
