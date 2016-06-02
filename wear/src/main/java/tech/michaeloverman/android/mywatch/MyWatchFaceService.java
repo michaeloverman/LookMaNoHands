@@ -28,6 +28,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,6 +37,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
+import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
@@ -72,19 +75,24 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
 
     private class Engine extends CanvasWatchFaceService.Engine {
+        GregorianCalendar mTime;
 
         private SensorManager mSensorManager;
         private Sensor mSensor;
+        private SensorEventListener mSensorEventListener;
 
         final Handler mUpdateTimeHandler = new EngineHandler(this);
         boolean mRegisteredTimeZoneReceiver = false;
+
+        boolean burnInProtectionModeFlag;
+
         Paint mBackgroundPaint;
         Paint mHoursPaint;
         Paint mMinutesPaint;
         Paint mSecondsPaint;
 
         boolean mAmbient;
-        GregorianCalendar mTime;
+
         final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -94,6 +102,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 invalidate();
             }
         };
+
         float mXOffset;
         float mYOffset;
 //        float mCenterX;
@@ -104,6 +113,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         float mMinuteRadius;
         float mSecondRadius;
         boolean mShowSeconds = false;
+        boolean mShowSteps = true;
         float mTextSize;
 
         /**
@@ -120,21 +130,27 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(MyWatchFaceService.this)
                     .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
+                    .setPeekOpacityMode(WatchFaceStyle.PEEK_OPACITY_MODE_TRANSLUCENT)
+                    .setAmbientPeekMode(WatchFaceStyle.AMBIENT_PEEK_MODE_HIDDEN)
+                    .setHotwordIndicatorGravity(Gravity.CENTER_VERTICAL)
                     .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
+                    .setViewProtectionMode(WatchFaceStyle.PROTECT_WHOLE_SCREEN)
                     .setShowSystemUiTime(false)
-                    .build());
+                    .build()
+            );
+
             Resources resources = MyWatchFaceService.this.getResources();
             mYOffset = resources.getDimension(R.dimen.digital_y_offset);
 
             mBackgroundPaint = new Paint();
-            mBackgroundPaint.setColor(resources.getColor(R.color.background));
+            mBackgroundPaint.setColor(resources.getColor(R.color.background, null));
 
             mHoursPaint = new Paint();
-            mHoursPaint = createTextPaint(resources.getColor(R.color.clemson_hour_text), HOUR_TYPEFACE);
+            mHoursPaint = createTextPaint(resources.getColor(R.color.clemson_hour_text, null), HOUR_TYPEFACE);
             mHoursPaint.setLetterSpacing(-0.15f);
 
             mMinutesPaint = new Paint();
-            mMinutesPaint = createTextPaint(resources.getColor(R.color.clemson_minute_text), MINUTE_TYPEFACE);
+            mMinutesPaint = createTextPaint(resources.getColor(R.color.clemson_minute_text, null), MINUTE_TYPEFACE);
 
             mSecondsPaint = new Paint();
             mSecondsPaint.setColor(Color.WHITE);
@@ -145,7 +161,23 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mStepsPaint = createTextPaint(Color.WHITE, MINUTE_TYPEFACE);
 
             mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            if (mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+                mSensorEventListener = new SensorEventListener() {
+                    @Override
+                    public void onSensorChanged(SensorEvent event) {
+                        mStepCount = (int) event.values[0];
+                    }
+
+                    @Override
+                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+                    }
+                };
+            } else {
+                mSensor = null;
+                mShowSteps = false;
+            }
         }
 
         @Override
@@ -224,6 +256,9 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         public void onPropertiesChanged(Bundle properties) {
             super.onPropertiesChanged(properties);
             mLowBitAmbient = properties.getBoolean(PROPERTY_LOW_BIT_AMBIENT, false);
+            burnInProtectionModeFlag = properties.getBoolean(PROPERTY_BURN_IN_PROTECTION, false);
+
+
         }
 
         @Override
@@ -264,10 +299,12 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         private void updateColors() {
             if (mAmbient) {
                 mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
+                mHoursPaint.setStyle(Paint.Style.STROKE);
                 mMinutesPaint.setColor(getResources().getColor(R.color.ambient_minute, null));
                 mStepsPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
             } else {
                 mHoursPaint.setColor(getResources().getColor(R.color.clemson_hour_text, null));
+                mHoursPaint.setStyle(Paint.Style.FILL);
                 mMinutesPaint.setColor(getResources().getColor(R.color.clemson_minute_text, null));
                 //mStepsPaint.setColor(Color.WHITE);
             }
@@ -295,9 +332,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             int hourInt = mTime.get(Calendar.HOUR);
             int minuteInt = mTime.get(Calendar.MINUTE);
         //    String hour = String.format("%d", hourInt);
-        //    String minute = String.format("%02d", minuteInt);
+            String minute = String.format("%02d", minuteInt);
             String hour = hourInt + "";
-            String minute = minuteInt + "";
 
             float hourRot = (float) (hourInt * Math.PI * 2 / 12);
             float minuteRot = (float) (minuteInt * Math.PI * 2 / 60);
@@ -324,9 +360,11 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                             + (0.4 * mSecondsPaint.getTextSize()));
                     canvas.drawText(second, secondX, secondY, mSecondsPaint);
                 }
-                canvas.drawText("7777", mCenterX - mStepsPaint.measureText("7777") * 0.5f,
-                        mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
-
+                if(mShowSteps) {
+                    String stepsString = mStepCount + "";
+                    canvas.drawText(stepsString, mCenterX - mStepsPaint.measureText(stepsString) * 0.5f,
+                            mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
+                }
             }
         }
 
