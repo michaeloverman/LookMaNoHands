@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageEvent;
@@ -37,6 +36,7 @@ public class MyWatchConfigListenerService extends WearableListenerService implem
         if (!myGoogleApiClient.isConnected()) {
             ConnectionResult myConnectionResult = myGoogleApiClient.blockingConnect(30, TimeUnit.SECONDS);
         }
+        MyWatchUtility.overwriteKeysInConfigDataMap(myGoogleApiClient, keysToOverwrite);
     }
 
     @Override

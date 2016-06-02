@@ -8,6 +8,6 @@ public class MyWatchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_watch);
+        setContentView(R.layout.activity_mywatch_config);
     }
 }

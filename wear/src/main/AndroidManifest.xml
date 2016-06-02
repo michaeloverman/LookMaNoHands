@@ -28,21 +28,13 @@
                 android:resource="@drawable/preview_digital_circular" />
             <meta-data
                 android:name="com.google.android.wearable.watchface.companionConfigurationAction"
-                android:value="tech.michaeloverman.android.mywatch.CONFIG_WATCH_FACE" />
+                android:value="tech.michaeloverman.android.mywatch.CONFIG_DIGITAL" />
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
 
                 <category android:name="com.google.android.wearable.watchface.category.WATCH_FACE" />
             </intent-filter>
         </service>
-        <activity android:name=".MyWearableConfigActivity"
-                  android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="tech.michaeloverman.android.mywatch.CONFIG_DIGITAL" />
-                <category android:name="com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

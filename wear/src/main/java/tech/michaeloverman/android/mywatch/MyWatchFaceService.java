@@ -16,6 +16,7 @@
 
 package tech.michaeloverman.android.mywatch;
 
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,16 +29,18 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
-import android.text.format.Time;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
 import java.lang.ref.WeakReference;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -81,12 +84,14 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         Paint mSecondsPaint;
 
         boolean mAmbient;
-        Time mTime;
+        GregorianCalendar mTime;
         final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                mTime.clear(intent.getStringExtra("time-zone"));
-                mTime.setToNow();
+            //    mTime.clear(intent.getStringExtra("time-zone"));
+            //    mTime.setToNow();
+                mTime.setTimeZone(TimeZone.getDefault());
+                invalidate();
             }
         };
         float mXOffset;
@@ -134,7 +139,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mSecondsPaint = new Paint();
             mSecondsPaint.setColor(Color.WHITE);
 
-            mTime = new Time();
+            mTime = new GregorianCalendar();
 
             mStepsPaint = new Paint();
             mStepsPaint = createTextPaint(Color.WHITE, MINUTE_TYPEFACE);
@@ -166,8 +171,11 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 registerReceiver();
 
                 // Update time zone in case it changed while we weren't visible.
-                mTime.clear(TimeZone.getDefault().getID());
-                mTime.setToNow();
+            //    mTime.clear(TimeZone.getDefault().getID());
+            //    mTime.setToNow();
+
+                mTime.setTimeZone(TimeZone.getDefault());
+
             } else {
                 unregisterReceiver();
             }
@@ -252,14 +260,16 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             updateTimer();
         }
 
+        @TargetApi(Build.VERSION_CODES.M)
         private void updateColors() {
             if (mAmbient) {
-                mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour));
-                mMinutesPaint.setColor(getResources().getColor(R.color.ambient_minute));
-
+                mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
+                mMinutesPaint.setColor(getResources().getColor(R.color.ambient_minute, null));
+                mStepsPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
             } else {
-                mHoursPaint.setColor(getResources().getColor(R.color.clemson_hour_text));
-                mMinutesPaint.setColor(getResources().getColor(R.color.clemson_minute_text));
+                mHoursPaint.setColor(getResources().getColor(R.color.clemson_hour_text, null));
+                mMinutesPaint.setColor(getResources().getColor(R.color.clemson_minute_text, null));
+                //mStepsPaint.setColor(Color.WHITE);
             }
         }
         @Override
@@ -275,21 +285,22 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             }
 
             // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
-            mTime.setToNow();
-            // some lines to test various times - BE SURE TO DELETE THESE!!!!
+            mTime.setTimeInMillis(System.currentTimeMillis());
 
-/*            String text = mAmbient
-                    ? String.format("%d:%02d", mTime.hour, mTime.minute)
-                    : String.format("%d:%02d:%02d", mTime.hour, mTime.minute, mTime.second);
-*/
-            int localHour = mTime.hour;
+
+        /*    int localHour = mTime.get(Calendar.HOUR);
             if (localHour > 12) localHour -= 12;
             if (localHour == 0) localHour = 12;
-            String hour = String.format("%d", localHour);
-            String minute = String.format("%02d", mTime.minute);
+        */
+            int hourInt = mTime.get(Calendar.HOUR);
+            int minuteInt = mTime.get(Calendar.MINUTE);
+        //    String hour = String.format("%d", hourInt);
+        //    String minute = String.format("%02d", minuteInt);
+            String hour = hourInt + "";
+            String minute = minuteInt + "";
 
-            float hourRot = (float) (mTime.hour * Math.PI * 2 / 12);
-            float minuteRot = (float) (mTime.minute * Math.PI * 2 / 60);
+            float hourRot = (float) (hourInt * Math.PI * 2 / 12);
+            float minuteRot = (float) (minuteInt * Math.PI * 2 / 60);
             float hourX = (float) ((mCenterX + ( Math.sin(hourRot) * mHourRadius))
                     - (0.5 * mHoursPaint.measureText(hour)));
             float hourY = (float) ((mCenterY + ( -Math.cos(hourRot) * mHourRadius))
@@ -302,18 +313,20 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             canvas.drawText(hour, hourX, hourY, mHoursPaint);
             canvas.drawText(minute, minuteX, minuteY, mMinutesPaint);
 
+            if (!isInAmbientMode()) {
+                if(mShowSeconds) {
+                    int secondsInt = mTime.get(Calendar.SECOND);
+                    String second = String.format("%02d", secondsInt);
+                    float secondRot = (float) (secondsInt * Math.PI * 2 / 60);
+                    float secondX = (float) ((mCenterX + (Math.sin(secondRot) * mSecondRadius))
+                            - (0.5 * mSecondsPaint.measureText(second)));
+                    float secondY = (float) ((mCenterY + (-Math.cos(secondRot) * mSecondRadius))
+                            + (0.4 * mSecondsPaint.getTextSize()));
+                    canvas.drawText(second, secondX, secondY, mSecondsPaint);
+                }
+                canvas.drawText("7777", mCenterX - mStepsPaint.measureText("7777") * 0.5f,
+                        mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
 
-            canvas.drawText("7777", mCenterX - mStepsPaint.measureText("7777") * 0.5f,
-                    mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
-
-            if (!isInAmbientMode() && mShowSeconds) {
-                String second = String.format("%02d", mTime.second);
-                float secondRot = (float) (mTime.second * Math.PI * 2 / 60);
-                float secondX = (float) ((mCenterX + ( Math.sin(secondRot) * mSecondRadius))
-                        - (0.5 * mSecondsPaint.measureText(second)));
-                float secondY = (float) ((mCenterY + ( -Math.cos(secondRot) * mSecondRadius))
-                        + (0.4 * mSecondsPaint.getTextSize()));
-                canvas.drawText(second, secondX, secondY, mSecondsPaint);
             }
         }
 

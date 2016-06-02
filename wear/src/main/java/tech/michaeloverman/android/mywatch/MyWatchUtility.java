@@ -106,4 +106,7 @@ public final class MyWatchUtility {
         }
 
     }
+    private MyWatchUtility() {
+
+    }
 }

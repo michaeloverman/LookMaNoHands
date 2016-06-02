@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.wearable.companion.WatchFaceCompanion;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,6 +33,12 @@ public class MyWatchConfigActivity extends Activity
         ResultCallback<DataApi.DataItemResult> {
 
     private static final String PATH_WITH_FEATURE = "/mywatch_config/MyWatch";
+    private static final String KEY_COLOR_HOURS = "COLOR_HOURS";
+    private static final String KEY_COLOR_MINUTES = "COLOR_MINUTES";
+    private static final String KEY_COLOR_SECONDS = "COLOR_SECONDS";
+    private static final String KEY_SHOW_SECONDS = "SHOW_SECONDS";
+
+
     private String watchFacePeerId;
     private ComponentName mComponentName;
     private GoogleApiClient myGoogleApiClient;
@@ -114,4 +124,62 @@ public class MyWatchConfigActivity extends Activity
 
         }
     }
+
+    private void setUpAllPickers(DataMap configData) {
+        setUpColorPickerSelection(R.id.hours, KEY_COLOR_HOURS, configData, R.string.color_purple);
+        setUpColorPickerSelection(R.id.minutes, KEY_COLOR_MINUTES, configData, R.string.color_orange);
+        setUpColorPickerSelection(R.id.seconds, KEY_COLOR_SECONDS, configData, R.string.color_white);
+
+        setUpColorPickerListener(R.id.hours, KEY_COLOR_HOURS);
+        setUpColorPickerListener(R.id.minutes, KEY_COLOR_MINUTES);
+        setUpColorPickerListener(R.id.seconds, KEY_COLOR_SECONDS);
+    }
+    private void setUpColorPickerSelection(int spinnerId, final String configKey,
+                                           DataMap config, int defaultColorNameResId) {
+        String defaultColorName = getString(defaultColorNameResId);
+        int defaultColor = Color.parseColor(defaultColorName);
+        int color;
+
+        if(config != null) {
+            color = config.getInt(configKey, defaultColor);
+        } else {
+            color = defaultColor;
+        }
+
+        Spinner spinner = (Spinner) findViewById(spinnerId);
+        String[] colorNames = getResources().getStringArray(R.array.color_array);
+        for (int i = 0; i < colorNames.length; i++) {
+            if (Color.parseColor(colorNames[i]) == color) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
+    }
+
+    private void setUpColorPickerListener(int spinnerId, final String configKey) {
+        Spinner spinner = (Spinner) findViewById(spinnerId);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                final String colorName = (String) parent.getItemAtPosition(position);
+                sendConfigUpdateMessage(configKey, Color.parseColor(colorName));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void sendConfigUpdateMessage(String configKey, int color) {
+        if (watchFacePeerId != null) {
+            DataMap newConfig = new DataMap();
+            newConfig.putInt(configKey, color);
+            byte[] rawConfigData = newConfig.toByteArray();
+            Wearable.MessageApi.sendMessage(myGoogleApiClient, watchFacePeerId,
+                    PATH_WITH_FEATURE, rawConfigData);
+        }
+    }
+
 }
