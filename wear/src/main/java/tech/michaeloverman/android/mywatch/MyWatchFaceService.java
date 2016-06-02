@@ -28,22 +28,37 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.renderscript.Element;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.FitnessStatusCodes;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.result.DailyTotalResult;
+
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -74,7 +89,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
     }
 
 
-    private class Engine extends CanvasWatchFaceService.Engine {
+    private class Engine extends CanvasWatchFaceService.Engine implements
+            GoogleApiClient.ConnectionCallbacks,
+            GoogleApiClient.OnConnectionFailedListener,
+            ResultCallback<DailyTotalResult> {
         GregorianCalendar mTime;
 
         private SensorManager mSensorManager;
@@ -122,6 +140,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
          */
         boolean mLowBitAmbient;
         private Paint mStepsPaint;
+
+        private boolean mRegisteredReceiver;
+        private GoogleApiClient mGoogleApiClient;
+        private boolean mStepsRequested;
         private int mStepCount;
 
         @Override
@@ -160,7 +182,16 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mStepsPaint = new Paint();
             mStepsPaint = createTextPaint(Color.WHITE, MINUTE_TYPEFACE);
 
-            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            mStepsRequested = false;
+            mGoogleApiClient = new GoogleApiClient.Builder(MyWatchFaceService.this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(Fitness.HISTORY_API)
+                    .addApi(Fitness.RECORDING_API)
+                    .useDefaultAccount()
+                    .build();
+
+        /*    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             if (mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
                 mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
                 mSensorEventListener = new SensorEventListener() {
@@ -174,15 +205,18 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
                     }
                 };
+                mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
             } else {
                 mSensor = null;
                 mShowSteps = false;
             }
+        */
         }
 
         @Override
         public void onDestroy() {
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
+        //    mSensorManager.unregisterListener(mSensorEventListener);
             super.onDestroy();
         }
 
@@ -200,6 +234,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             super.onVisibilityChanged(visible);
 
             if (visible) {
+                mGoogleApiClient.connect();
                 registerReceiver();
 
                 // Update time zone in case it changed while we weren't visible.
@@ -210,6 +245,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             } else {
                 unregisterReceiver();
+
+                if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                    mGoogleApiClient.disconnect();
+                }
             }
 
             // Whether the timer should be running depends on whether we're visible (as well as
@@ -264,6 +303,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onTimeTick() {
             super.onTimeTick();
+            getTotalSteps();
             invalidate();
         }
 
@@ -361,6 +401,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     canvas.drawText(second, secondX, secondY, mSecondsPaint);
                 }
                 if(mShowSteps) {
+                    getTotalSteps();0
                     String stepsString = mStepCount + "";
                     canvas.drawText(stepsString, mCenterX - mStepsPaint.measureText(stepsString) * 0.5f,
                             mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
@@ -400,6 +441,19 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             }
         }
 
+        private void getTotalSteps() {
+            if ((mGoogleApiClient != null)
+                    && (mGoogleApiClient.isConnected())
+                    && (!mStepsRequested)) {
+                mStepsRequested = true;
+                PendingResult<DailyTotalResult> stepsResult =
+                        Fitness.HistoryApi.readDailyTotal(
+                                mGoogleApiClient, DataType.TYPE_STEP_COUNT_DELTA);
+                stepsResult.setResultCallback(this);
+
+            }
+        }
+
         @Override
         public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             super.onSurfaceChanged(holder, format, width, height);
@@ -409,6 +463,56 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mHourRadius = (float) (mCenterX * 0.65);
             mMinuteRadius = (float) (mCenterX * 0.60);
             mSecondRadius = (float) (mCenterX * 0.50);
+        }
+
+        @Override
+        public void onConnected(@Nullable Bundle bundle) {
+            mStepsRequested = false;
+            subscribeToSteps();
+            getTotalSteps();
+        }
+
+        private void subscribeToSteps() {
+            Fitness.RecordingApi.subscribe(mGoogleApiClient, DataType.TYPE_STEP_COUNT_DELTA)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status status) {
+                            if (status.isSuccess()) {
+                                if (status.getStatusCode() == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
+
+                                } else {
+
+                                }
+                            } else {
+
+                            }
+                        }
+
+                    });
+        }
+        @Override
+        public void onConnectionSuspended(int i) {
+
+        }
+
+        @Override
+        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+        }
+
+        @Override
+        public void onResult(@NonNull DailyTotalResult dailyTotalResult) {
+            mStepsRequested = false;
+
+            if (dailyTotalResult.getStatus().isSuccess()) {
+                List<DataPoint> points = dailyTotalResult.getTotal().getDataPoints();
+
+                if (!points.isEmpty()) {
+                    mStepCount = points.get(0).getValue(Field.FIELD_STEPS).asInt();
+                }
+            } else {
+
+            }
         }
     }
 

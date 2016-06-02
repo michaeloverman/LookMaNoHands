@@ -2,7 +2,7 @@
 <resources>
     <color name="background">#000000</color>
     <color name="ambient_minute">#666666</color>
-    <color name="ambient_hour">#666666</color>
+    <color name="ambient_hour">#bbbbbb</color>
     <color name="wvu_hour_text">#00457c</color>
     <color name="wvu_minute_text">#efb31d</color>
     <color name="jmu_hour_text">#450084</color>
