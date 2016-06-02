@@ -95,9 +95,9 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             ResultCallback<DailyTotalResult> {
         GregorianCalendar mTime;
 
-        private SensorManager mSensorManager;
-        private Sensor mSensor;
-        private SensorEventListener mSensorEventListener;
+//        private SensorManager mSensorManager;
+//        private Sensor mSensor;
+//        private SensorEventListener mSensorEventListener;
 
         final Handler mUpdateTimeHandler = new EngineHandler(this);
         boolean mRegisteredTimeZoneReceiver = false;
@@ -114,8 +114,6 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-            //    mTime.clear(intent.getStringExtra("time-zone"));
-            //    mTime.setToNow();
                 mTime.setTimeZone(TimeZone.getDefault());
                 invalidate();
             }
@@ -191,32 +189,11 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     .useDefaultAccount()
                     .build();
 
-        /*    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            if (mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
-                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-                mSensorEventListener = new SensorEventListener() {
-                    @Override
-                    public void onSensorChanged(SensorEvent event) {
-                        mStepCount = (int) event.values[0];
-                    }
-
-                    @Override
-                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-                    }
-                };
-                mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            } else {
-                mSensor = null;
-                mShowSteps = false;
-            }
-        */
         }
 
         @Override
         public void onDestroy() {
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
-        //    mSensorManager.unregisterListener(mSensorEventListener);
             super.onDestroy();
         }
 
@@ -370,6 +347,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             if (localHour == 0) localHour = 12;
         */
             int hourInt = mTime.get(Calendar.HOUR);
+            if (hourInt == 0) { hourInt = 12; }
             int minuteInt = mTime.get(Calendar.MINUTE);
         //    String hour = String.format("%d", hourInt);
             String minute = String.format("%02d", minuteInt);
@@ -401,7 +379,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     canvas.drawText(second, secondX, secondY, mSecondsPaint);
                 }
                 if(mShowSteps) {
-                    getTotalSteps();0
+                    getTotalSteps();
                     String stepsString = mStepCount + "";
                     canvas.drawText(stepsString, mCenterX - mStepsPaint.measureText(stepsString) * 0.5f,
                             mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
