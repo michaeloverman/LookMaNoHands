@@ -411,7 +411,6 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     + (0.4 * mMinutesPaint.getTextSize()));
 
             canvas.drawText(hour, hourX, hourY, mHoursPaint);
-            canvas.drawText(minute, minuteX, minuteY, mMinutesPaint);
 
             if (!isInAmbientMode()) {
                 if(mShowSeconds) {
@@ -430,45 +429,49 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     canvas.drawText(stepsString, mCenterX - mStepsPaint.measureText(stepsString) * 0.5f,
                             mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
 
-                    int numFeet = mStepCount / mStepsPerFoot;
-                    canvas.drawText(mStepsPerFoot + " steps/foot", mCenterX, mCenterY + 55, mStepsPaint);
-                    canvas.drawText(numFeet + " total feet", mCenterX, mCenterY + 70, mStepsPaint);
-
                     Bitmap bm;
-                    boolean footed = true;
+                    boolean whichFoot = true;
                     int i;
-                    float x = 35f;
-                    float y = 250f;
+                    float x = 0f;
+                    float y = 0f;
 
-                    for (i = 0; i < feetX.length - 1; i++) {
-                        if (i > 3 && i < 8) {
-                            if (footed) {
-                                bm = mLeftFootHorz;
-                            } else {
-                                bm = mRightFootHorz;
-                            }
-                        } else {
-                            if (footed) {
+                    int numFeet = mStepCount / mStepsPerFoot;
+                    if (numFeet > feetX.length) numFeet = feetX.length;
+                //    canvas.drawText(mStepsPerFoot + " steps/foot", mCenterX, mCenterY + 55, mStepsPaint);
+                //    canvas.drawText(numFeet + " total feet", mCenterX, mCenterY + 70, mStepsPaint);
+
+                    for (i = 0; i < numFeet; i++) {
+                        x += feetX[i];
+                        y -= feetY[i];
+                        if (i < 4 || i > 7) {
+                            if (whichFoot) {
                                 bm = mLeftFoot;
                             } else {
                                 bm = mRightFoot;
                             }
+                        } else {
+                            if (whichFoot) {
+                                bm = mLeftFootHorz;
+                            } else {
+                                bm = mRightFootHorz;
+                            }
                         }
-                        footed = !footed;
                         canvas.drawBitmap(bm, x, y, mFeetPaint);
-                        x += feetX[i];
-                        y -= feetY[i];
+
+                        whichFoot = !whichFoot;
                     }
 
 
                 }
+
             }
 
+            canvas.drawText(minute, minuteX, minuteY, mMinutesPaint);
 
 
         }
-        float[] feetX = new float[] { 25f,  5f, 25f, 15f, 22f, 20f, 20f, 16f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f };
-        float[] feetY = new float[] {  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
+        float[] feetX = new float[] {   7f, 25f,  5f, 25f, 15f, 22f, 20f, 20f, 16f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f };
+        float[] feetY = new float[] {-250f,  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
         /**
          * Starts the {@link #mUpdateTimeHandler} timer if it should be running and isn't currently
          * or stops it if it shouldn't be running but currently is.
