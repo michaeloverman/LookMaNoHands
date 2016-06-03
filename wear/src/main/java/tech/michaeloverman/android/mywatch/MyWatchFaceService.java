@@ -22,11 +22,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -34,7 +40,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.renderscript.Element;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.wearable.watchface.CanvasWatchFaceService;
@@ -108,6 +113,11 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         Paint mHoursPaint;
         Paint mMinutesPaint;
         Paint mSecondsPaint;
+
+        Bitmap mRightFoot, mLeftFoot;
+        Drawable mRightDrawable, mLeftDrawable;
+        Paint mFeetPaint;
+        Drawable mVectorBoot;
 
         boolean mAmbient;
 
@@ -190,6 +200,15 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     .addApi(Fitness.RECORDING_API)
                     .useDefaultAccount()
                     .build();
+
+            mRightDrawable = resources.getDrawable(R.drawable.tiny_right_footprint_angle, null);
+            mLeftDrawable = resources.getDrawable(R.drawable.tiny_left_footprint_angle, null);
+            mRightFoot = ( (BitmapDrawable) mRightDrawable).getBitmap();
+            mLeftFoot = ( (BitmapDrawable) mLeftDrawable).getBitmap();
+            mVectorBoot = resources.getDrawable(R.drawable.vector_boot, null);
+            mFeetPaint = new Paint();
+            ColorFilter filter = new PorterDuffColorFilter(resources.getColor(R.color.clemson_hour_text, null), PorterDuff.Mode.SRC_IN);
+            mFeetPaint.setColorFilter(filter);
 
         /*    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             if (mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
@@ -370,6 +389,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             if (localHour == 0) localHour = 12;
         */
             int hourInt = mTime.get(Calendar.HOUR);
+            if (hourInt == 0) hourInt = 12;
             int minuteInt = mTime.get(Calendar.MINUTE);
         //    String hour = String.format("%d", hourInt);
             String minute = String.format("%02d", minuteInt);
@@ -401,12 +421,20 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     canvas.drawText(second, secondX, secondY, mSecondsPaint);
                 }
                 if(mShowSteps) {
-                    getTotalSteps();0
+                    getTotalSteps();
                     String stepsString = mStepCount + "";
                     canvas.drawText(stepsString, mCenterX - mStepsPaint.measureText(stepsString) * 0.5f,
                             mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
+
+                    canvas.drawBitmap(mRightFoot, 100f, 200f, mFeetPaint);
+                    canvas.drawBitmap(mLeftFoot, 115f, 165f, mFeetPaint);
+                    canvas.drawBitmap(mRightFoot, 150f, 150f, mFeetPaint);
+                    canvas.drawBitmap(mLeftFoot, 165f, 115f, mFeetPaint);
                 }
             }
+
+
+
         }
 
         /**
