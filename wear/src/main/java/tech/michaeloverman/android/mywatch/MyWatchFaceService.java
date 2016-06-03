@@ -114,10 +114,9 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         Paint mMinutesPaint;
         Paint mSecondsPaint;
 
-        Bitmap mRightFoot, mLeftFoot;
-        Drawable mRightDrawable, mLeftDrawable;
+        Bitmap mRightFoot, mLeftFoot, mRightFootHorz, mLeftFootHorz;
+        Drawable mRightDrawable, mLeftDrawable, mRightHorzDrawable, mLeftHorzDrawable;
         Paint mFeetPaint;
-        int mGoalSteps = 7000;
 
         boolean mAmbient;
 
@@ -155,6 +154,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         private GoogleApiClient mGoogleApiClient;
         private boolean mStepsRequested;
         private int mStepCount;
+        private int mGoalSteps = 7000;
+        private int mStepsPerFoot;
 
         @Override
         public void onCreate(SurfaceHolder holder) {
@@ -203,11 +204,16 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             mRightDrawable = resources.getDrawable(R.drawable.tiny_right_footprint_angle, null);
             mLeftDrawable = resources.getDrawable(R.drawable.tiny_left_footprint_angle, null);
+            mRightHorzDrawable = resources.getDrawable(R.drawable.tiny_right_footprint_horz, null);
+            mLeftHorzDrawable = resources.getDrawable(R.drawable.tiny_left_footprint_horz, null);
             mRightFoot = ( (BitmapDrawable) mRightDrawable).getBitmap();
             mLeftFoot = ( (BitmapDrawable) mLeftDrawable).getBitmap();
+            mRightFootHorz = ( (BitmapDrawable) mRightHorzDrawable).getBitmap();
+            mLeftFootHorz = ( (BitmapDrawable) mLeftHorzDrawable).getBitmap();
             mFeetPaint = new Paint();
-            ColorFilter filter = new PorterDuffColorFilter(resources.getColor(R.color.clemson_hour_text, null), PorterDuff.Mode.SRC_IN);
+            ColorFilter filter = new PorterDuffColorFilter(resources.getColor(R.color.wvu_minute_text, null), PorterDuff.Mode.SRC_IN);
             mFeetPaint.setColorFilter(filter);
+            mStepsPerFoot = mGoalSteps / feetX.length;
 
         /*    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             if (mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
@@ -424,11 +430,36 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     canvas.drawText(stepsString, mCenterX - mStepsPaint.measureText(stepsString) * 0.5f,
                             mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
 
-                    int numFeet = mStepCount / mGoalSteps * feetX.length;
-                    for (int i = 0; i < numFeet; i++) {
-                        if (i % 2 == 0) canvas.drawBitmap(mRightFoot, feetX[i], feetY[i], mFeetPaint);
-                        else canvas.drawBitmap(mLeftFoot, feetX[i], feetY[i], mFeetPaint);
+                    int numFeet = mStepCount / mStepsPerFoot;
+                    canvas.drawText(mStepsPerFoot + " steps/foot", mCenterX, mCenterY + 55, mStepsPaint);
+                    canvas.drawText(numFeet + " total feet", mCenterX, mCenterY + 70, mStepsPaint);
+
+                    Bitmap bm;
+                    boolean footed = true;
+                    int i;
+                    float x = 35f;
+                    float y = 250f;
+
+                    for (i = 0; i < feetX.length - 1; i++) {
+                        if (i > 3 && i < 8) {
+                            if (footed) {
+                                bm = mLeftFootHorz;
+                            } else {
+                                bm = mRightFootHorz;
+                            }
+                        } else {
+                            if (footed) {
+                                bm = mLeftFoot;
+                            } else {
+                                bm = mRightFoot;
+                            }
+                        }
+                        footed = !footed;
+                        canvas.drawBitmap(bm, x, y, mFeetPaint);
+                        x += feetX[i];
+                        y -= feetY[i];
                     }
+
 
                 }
             }
@@ -436,8 +467,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
 
         }
-        float[] feetX = new float[] { 50f, 65f, 100f, 115f, 150f, 165f, 200f, 215f };
-        float[] feetY = new float[] { 215f,200f, 165f, 150f, 115f, 100f, 65f, 50f };
+        float[] feetX = new float[] { 25f,  5f, 25f, 15f, 22f, 20f, 20f, 16f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f };
+        float[] feetY = new float[] {  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
         /**
          * Starts the {@link #mUpdateTimeHandler} timer if it should be running and isn't currently
          * or stops it if it shouldn't be running but currently is.
