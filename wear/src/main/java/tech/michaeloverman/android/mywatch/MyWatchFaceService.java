@@ -117,7 +117,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         Bitmap mRightFoot, mLeftFoot;
         Drawable mRightDrawable, mLeftDrawable;
         Paint mFeetPaint;
-        Drawable mVectorBoot;
+        int mGoalSteps = 7000;
 
         boolean mAmbient;
 
@@ -205,7 +205,6 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mLeftDrawable = resources.getDrawable(R.drawable.tiny_left_footprint_angle, null);
             mRightFoot = ( (BitmapDrawable) mRightDrawable).getBitmap();
             mLeftFoot = ( (BitmapDrawable) mLeftDrawable).getBitmap();
-            mVectorBoot = resources.getDrawable(R.drawable.vector_boot, null);
             mFeetPaint = new Paint();
             ColorFilter filter = new PorterDuffColorFilter(resources.getColor(R.color.clemson_hour_text, null), PorterDuff.Mode.SRC_IN);
             mFeetPaint.setColorFilter(filter);
@@ -426,17 +425,20 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     canvas.drawText(stepsString, mCenterX - mStepsPaint.measureText(stepsString) * 0.5f,
                             mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
 
-                    canvas.drawBitmap(mRightFoot, 100f, 200f, mFeetPaint);
-                    canvas.drawBitmap(mLeftFoot, 115f, 165f, mFeetPaint);
-                    canvas.drawBitmap(mRightFoot, 150f, 150f, mFeetPaint);
-                    canvas.drawBitmap(mLeftFoot, 165f, 115f, mFeetPaint);
+                    int numFeet = mStepCount / mGoalSteps * feetX.length;
+                    for (int i = 0; i < numFeet; i++) {
+                        if (i % 2 == 0) canvas.drawBitmap(mRightFoot, feetX[i], feetY[i], mFeetPaint);
+                        else canvas.drawBitmap(mLeftFoot, feetX[i], feetY[i], mFeetPaint);
+                    }
+
                 }
             }
 
 
 
         }
-
+        float[] feetX = new float[] { 50f, 65f, 100f, 115f, 150f, 165f, 200f, 215f };
+        float[] feetY = new float[] { 215f,200f, 165f, 150f, 115f, 100f, 65f, 50f };
         /**
          * Starts the {@link #mUpdateTimeHandler} timer if it should be running and isn't currently
          * or stops it if it shouldn't be running but currently is.
