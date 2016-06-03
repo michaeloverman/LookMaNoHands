@@ -390,10 +390,9 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         */
             int hourInt = mTime.get(Calendar.HOUR);
             if (hourInt == 0) hourInt = 12;
+            String hour = String.format("%d", hourInt);
             int minuteInt = mTime.get(Calendar.MINUTE);
-        //    String hour = String.format("%d", hourInt);
             String minute = String.format("%02d", minuteInt);
-            String hour = hourInt + "";
 
             float hourRot = (float) (hourInt * Math.PI * 2 / 12);
             float minuteRot = (float) (minuteInt * Math.PI * 2 / 60);
