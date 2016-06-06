@@ -84,6 +84,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
     private static final Typeface MINUTE_TYPEFACE = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
 
+    private static final String TAG = "MyWatchFaceService";
+
     /**
      * Update rate in milliseconds for interactive mode. We update once a second since seconds are
      * displayed in interactive mode.
@@ -107,6 +109,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             GoogleApiClient.OnConnectionFailedListener,
             ResultCallback<DailyTotalResult> {
         GregorianCalendar mTime;
+
+        private final String TAG = "Engine.class: ";
 
         private SensorManager mSensorManager;
         private Sensor mSensor;
@@ -135,6 +139,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                System.out.println(TAG + "BroadcastReceiver onReceive()");
             //    mTime.clear(intent.getStringExtra("time-zone"));
             //    mTime.setToNow();
                 mTime.setTimeZone(TimeZone.getDefault());
@@ -175,6 +180,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onCreate(SurfaceHolder holder) {
+            System.out.println(TAG + "onCreate()");
+
             super.onCreate(holder);
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(MyWatchFaceService.this)
@@ -195,11 +202,11 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mBackgroundPaint.setColor(resources.getColor(R.color.background, null));
 
             mHoursPaint = new Paint();
-            mHoursPaint = createTextPaint(mHourColor, null), HOUR_TYPEFACE);
+            mHoursPaint = createTextPaint(mHourColor, HOUR_TYPEFACE);
             mHoursPaint.setLetterSpacing(-0.15f);
 
             mMinutesPaint = new Paint();
-            mMinutesPaint = createTextPaint(mMinuteColor, null), MINUTE_TYPEFACE);
+            mMinutesPaint = createTextPaint(mMinuteColor, MINUTE_TYPEFACE);
 
             mSecondsPaint = new Paint();
             mSecondsPaint.setColor(mSecondColor);
@@ -218,6 +225,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     .addApi(Fitness.RECORDING_API)
                     .useDefaultAccount()
                     .build();
+
+            System.out.println(TAG + "mGoogleApiClient built");
 
             mRightDrawable = resources.getDrawable(R.drawable.tiny_right_footprint_angle, null);
             mLeftDrawable = resources.getDrawable(R.drawable.tiny_left_footprint_angle, null);
@@ -256,6 +265,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onDestroy() {
+
+            System.out.println(TAG + "on Destroy()");
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
         //    mSensorManager.unregisterListener(mSensorEventListener);
             if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
@@ -266,6 +277,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private Paint createTextPaint(int textColor, Typeface type) {
+            System.out.println(TAG + "createTextPaint()" + textColor);
             Paint paint = new Paint();
             paint.setColor(textColor);
             paint.setTypeface(type);
@@ -276,6 +288,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onVisibilityChanged(boolean visible) {
+            System.out.println(TAG + "onVisibilityChanged()");
             super.onVisibilityChanged(visible);
 
             if (visible) {
@@ -302,6 +315,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private void registerReceiver() {
+            System.out.println(TAG + "registerReceiver()");
             if (mRegisteredTimeZoneReceiver) {
                 return;
             }
@@ -311,6 +325,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private void unregisterReceiver() {
+            System.out.println(TAG + "unregisterReceiver()");
             if (!mRegisteredTimeZoneReceiver) {
                 return;
             }
@@ -320,6 +335,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onApplyWindowInsets(WindowInsets insets) {
+            System.out.println(TAG + "onApplyWindowInsets()");
             super.onApplyWindowInsets(insets);
 
             // Load resources that have alternate values for round watches.
@@ -338,6 +354,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onPropertiesChanged(Bundle properties) {
+            System.out.println(TAG + "onPropertiesChanged()");
             super.onPropertiesChanged(properties);
             mLowBitAmbient = properties.getBoolean(PROPERTY_LOW_BIT_AMBIENT, false);
             burnInProtectionModeFlag = properties.getBoolean(PROPERTY_BURN_IN_PROTECTION, false);
@@ -354,6 +371,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onAmbientModeChanged(boolean inAmbientMode) {
+            System.out.println(TAG + "onAmbientModeChanged() " + inAmbientMode);
             super.onAmbientModeChanged(inAmbientMode);
 /*            if (mAmbient != inAmbientMode) {
                 mAmbient = inAmbientMode;
@@ -382,6 +400,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @TargetApi(Build.VERSION_CODES.M)
         private void updateColorsAndSteps() {
+            System.out.println(TAG + "updateColorsAndSteps()");
             if (mAmbient) {
                 mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
                 mHoursPaint.setStyle(Paint.Style.STROKE);
@@ -397,6 +416,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
+            System.out.println(TAG + "onDraw()");
             // Draw the background.
             if (isInAmbientMode()) {
                 canvas.drawColor(Color.BLACK);
@@ -526,6 +546,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private void getTotalSteps() {
+            System.out.println(TAG + "getTotalSteps()");
             if ((mGoogleApiClient != null)
                     && (mGoogleApiClient.isConnected())
                     && (!mStepsRequested)) {
@@ -540,6 +561,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            System.out.println(TAG + "onSurfaceChanged()");
+
             super.onSurfaceChanged(holder, format, width, height);
 
             mCenterX = width / 2f;
@@ -551,6 +574,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
+            System.out.println(TAG + "onConnected()");
             Wearable.DataApi.addListener(mGoogleApiClient, onDataChangedListener);
             Wearable.DataApi.getDataItems(mGoogleApiClient).setResultCallback(onConnectedResultCallback);
             mStepsRequested = false;
@@ -562,6 +586,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             @Override
             public void onDataChanged(DataEventBuffer dataEventBuffer) {
+                System.out.println(TAG + "onDataChangedListener onDataChanged()");
                 for (DataEvent event : dataEventBuffer) {
                     if (event.getType() == DataEvent.TYPE_CHANGED) {
                         DataItem item = event.getDataItem();
@@ -580,6 +605,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 new ResultCallback<DataItemBuffer>() {
                     @Override
                     public void onResult(@NonNull DataItemBuffer dataItems) {
+                        System.out.println(TAG + "onConnectedResultCallback onResult()");
                         for (DataItem item : dataItems) {
                             updateParamsForDataItem(item);
                         }
@@ -592,6 +618,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 };
 
         private void updateParamsForDataItem(DataItem item) {
+            System.out.println(TAG + "updateParamsForDataItem()");
             if ((item.getUri().getPath()).equals("/watch_face_config_nohands")) {
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                 if (dataMap.containsKey("hour_color")) {
@@ -631,6 +658,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private void subscribeToSteps() {
+            System.out.println(TAG + "subscribeToSteps()");
             Fitness.RecordingApi.subscribe(mGoogleApiClient, DataType.TYPE_STEP_COUNT_DELTA)
                     .setResultCallback(new ResultCallback<Status>() {
                         @Override
@@ -660,6 +688,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onResult(@NonNull DailyTotalResult dailyTotalResult) {
+            System.out.println(TAG + "onResult() - steps related...");
             mStepsRequested = false;
 
             if (dailyTotalResult.getStatus().isSuccess()) {
