@@ -83,7 +83,7 @@
             android:layout_weight="1" />
         <Switch
             android:id="@+id/show_seconds"
-
+            android:showText="true"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -99,7 +99,7 @@
             android:layout_weight="1" />
         <Switch
             android:id="@+id/show_stepcount"
-
+            android:showText="true"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -115,7 +115,7 @@
             android:layout_weight="1" />
         <Switch
             android:id="@+id/show_footpath"
-
+            android:showText="true"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -131,7 +131,7 @@
             android:layout_weight="1" />
         <Switch
             android:id="@+id/show_date"
-
+            android:showText="true"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>

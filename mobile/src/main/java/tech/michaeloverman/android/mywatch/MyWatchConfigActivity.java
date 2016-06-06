@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -70,9 +71,16 @@ public class MyWatchConfigActivity extends Activity
         OKbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // get details of each config
+                // get details of each config // assign to variables
+                mHourColor = getColorInt(((Spinner) findViewById(R.id.hours)).getSelectedItem().toString());
+                mMinuteColor = getColorInt(((Spinner) findViewById(R.id.minutes)).getSelectedItem().toString());
+                mSecondsColor = getColorInt(((Spinner) findViewById(R.id.seconds)).getSelectedItem().toString());
+                mFootpathColor = getColorInt(((Spinner) findViewById(R.id.footpath)).getSelectedItem().toString());
+                mShowSeconds = ((Switch) findViewById(R.id.show_seconds)).isChecked();
+                mShowStepCount = ((Switch) findViewById(R.id.show_stepcount)).isChecked();
+                mShowFootpath = ((Switch) findViewById(R.id.show_footpath)).isChecked();
+                mShowDate = ((Switch) findViewById(R.id.show_date)).isChecked();
 
-                // assign to variables
 
 
                 sendParamsAndFinish();
@@ -88,6 +96,26 @@ public class MyWatchConfigActivity extends Activity
         });
     }
 
+    private int getColorInt(String colorString) {
+        switch (colorString) {
+            case "Red":
+                return Color.RED;
+            case "Orange":
+                return 0;
+            case "Yellow":
+                return Color.YELLOW;
+            case "Green":
+                return Color.GREEN;
+            case "Blue":
+                return Color.BLUE;
+            case "Purple":
+                return Color.MAGENTA;
+            case "White":
+            default:
+                return Color.WHITE;
+
+        }
+    }
     private void sendParamsAndFinish() {
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create("/watch_face_config_nohands");
         DataMap dataMap = putDataMapRequest.getDataMap();

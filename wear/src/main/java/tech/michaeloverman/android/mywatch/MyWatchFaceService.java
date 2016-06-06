@@ -121,10 +121,14 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         Paint mHoursPaint;
         Paint mMinutesPaint;
         Paint mSecondsPaint;
+        int mHourColor = Color.WHITE;
+        int mMinuteColor = Color.WHITE;
+        int mSecondColor = Color.WHITE;
+        int mFootpathColor = Color.WHITE;
 
         Bitmap mRightFoot, mLeftFoot, mRightFootHorz, mLeftFootHorz;
         Drawable mRightDrawable, mLeftDrawable, mRightHorzDrawable, mLeftHorzDrawable;
-        Paint mFeetPaint;
+        Paint mFootpathPaint;
 
         boolean mAmbient;
 
@@ -164,8 +168,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         private int mStepCount;
         private int mGoalSteps = 7000;
         private int mStepsPerFoot;
-        float[] footPathX = new float[] {   7f, 25f,  5f, 25f, 15f, 22f, 20f, 20f, 16f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f };
-        float[] footPathY = new float[] {-250f,  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
+        float[] mFootpathX = new float[] {   7f, 25f,  5f, 25f, 15f, 22f, 20f, 20f, 16f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f };
+        float[] mFootpathY = new float[] {-250f,  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
         private boolean mShowDate;
         private boolean mShowStepCount;
 
@@ -191,19 +195,19 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mBackgroundPaint.setColor(resources.getColor(R.color.background, null));
 
             mHoursPaint = new Paint();
-            mHoursPaint = createTextPaint(resources.getColor(R.color.clemson_hour_text, null), HOUR_TYPEFACE);
+            mHoursPaint = createTextPaint(mHourColor, null), HOUR_TYPEFACE);
             mHoursPaint.setLetterSpacing(-0.15f);
 
             mMinutesPaint = new Paint();
-            mMinutesPaint = createTextPaint(resources.getColor(R.color.clemson_minute_text, null), MINUTE_TYPEFACE);
+            mMinutesPaint = createTextPaint(mMinuteColor, null), MINUTE_TYPEFACE);
 
             mSecondsPaint = new Paint();
-            mSecondsPaint.setColor(Color.WHITE);
+            mSecondsPaint.setColor(mSecondColor);
 
             mTime = new GregorianCalendar();
 
             mStepsPaint = new Paint();
-            mStepsPaint = createTextPaint(Color.WHITE, MINUTE_TYPEFACE);
+            mStepsPaint = createTextPaint(mFootpathColor, MINUTE_TYPEFACE);
 
             mStepsRequested = false;
             mGoogleApiClient = new GoogleApiClient.Builder(MyWatchFaceService.this)
@@ -223,10 +227,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mLeftFoot = ( (BitmapDrawable) mLeftDrawable).getBitmap();
             mRightFootHorz = ( (BitmapDrawable) mRightHorzDrawable).getBitmap();
             mLeftFootHorz = ( (BitmapDrawable) mLeftHorzDrawable).getBitmap();
-            mFeetPaint = new Paint();
+            mFootpathPaint = new Paint();
             ColorFilter filter = new PorterDuffColorFilter(resources.getColor(R.color.wvu_minute_text, null), PorterDuff.Mode.SRC_IN);
-            mFeetPaint.setColorFilter(filter);
-            mStepsPerFoot = mGoalSteps / footPathX.length;
+            mFootpathPaint.setColorFilter(filter);
+            mStepsPerFoot = mGoalSteps / mFootpathX.length;
 
         /*    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             if (mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
@@ -454,13 +458,13 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     float y = 0f;
 
                     int numFeet = mStepCount / mStepsPerFoot;
-                    if (numFeet > footPathX.length) numFeet = footPathX.length;
+                    if (numFeet > mFootpathX.length) numFeet = mFootpathX.length;
                 //    canvas.drawText(mStepsPerFoot + " steps/foot", mCenterX, mCenterY + 55, mStepsPaint);
                 //    canvas.drawText(numFeet + " total feet", mCenterX, mCenterY + 70, mStepsPaint);
 
                     for (i = 0; i < numFeet; i++) {
-                        x += footPathX[i];
-                        y -= footPathY[i];
+                        x += mFootpathX[i];
+                        y -= mFootpathY[i];
                         if (i < 4 || i > 7) {
                             if (whichFoot) {
                                 bm = mLeftFoot;
@@ -474,7 +478,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                                 bm = mRightFootHorz;
                             }
                         }
-                        canvas.drawBitmap(bm, x, y, mFeetPaint);
+                        canvas.drawBitmap(bm, x, y, mFootpathPaint);
 
                         whichFoot = !whichFoot;
                     }
@@ -604,7 +608,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 }
                 if (dataMap.containsKey("footpath_color")) {
                     int c = dataMap.getInt("footpath_color");
-                    mFeetPaint.setColor(c);
+                    mFootpathPaint.setColor(c);
                 }
                 if (dataMap.containsKey("show_seconds")) {
                     boolean b = dataMap.getBoolean("show_seconds");
