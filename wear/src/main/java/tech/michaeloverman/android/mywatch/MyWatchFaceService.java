@@ -59,6 +59,14 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.result.DailyTotalResult;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Wearable;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
@@ -140,7 +148,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         float mMinuteRadius;
         float mSecondRadius;
         boolean mShowSeconds = false;
-        boolean mShowSteps = true;
+        boolean mShowFootpath = true;
         float mTextSize;
 
         /**
@@ -156,6 +164,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         private int mStepCount;
         private int mGoalSteps = 7000;
         private int mStepsPerFoot;
+        float[] footPathX = new float[] {   7f, 25f,  5f, 25f, 15f, 22f, 20f, 20f, 16f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f };
+        float[] footPathY = new float[] {-250f,  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
+        private boolean mShowDate;
+        private boolean mShowStepCount;
 
         @Override
         public void onCreate(SurfaceHolder holder) {
@@ -197,6 +209,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mGoogleApiClient = new GoogleApiClient.Builder(MyWatchFaceService.this)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
+                    .addApi(Wearable.API)
                     .addApi(Fitness.HISTORY_API)
                     .addApi(Fitness.RECORDING_API)
                     .useDefaultAccount()
@@ -213,7 +226,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mFeetPaint = new Paint();
             ColorFilter filter = new PorterDuffColorFilter(resources.getColor(R.color.wvu_minute_text, null), PorterDuff.Mode.SRC_IN);
             mFeetPaint.setColorFilter(filter);
-            mStepsPerFoot = mGoalSteps / feetX.length;
+            mStepsPerFoot = mGoalSteps / footPathX.length;
 
         /*    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             if (mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
@@ -232,7 +245,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
             } else {
                 mSensor = null;
-                mShowSteps = false;
+                mShowFootpath = false;
             }
         */
         }
@@ -241,6 +254,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         public void onDestroy() {
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME);
         //    mSensorManager.unregisterListener(mSensorEventListener);
+            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                Wearable.DataApi.removeListener(mGoogleApiClient, onDataChangedListener);
+                mGoogleApiClient.disconnect();
+            }
             super.onDestroy();
         }
 
@@ -327,7 +344,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onTimeTick() {
             super.onTimeTick();
-            getTotalSteps();
+            //getTotalSteps();
             invalidate();
         }
 
@@ -351,7 +368,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
           //  }*/
 
             mAmbient = inAmbientMode;
-            updateColors();
+            updateColorsAndSteps();
             invalidate();
 
             // Whether the timer should be running depends on whether we're visible (as well as
@@ -360,12 +377,13 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         @TargetApi(Build.VERSION_CODES.M)
-        private void updateColors() {
+        private void updateColorsAndSteps() {
             if (mAmbient) {
                 mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
                 mHoursPaint.setStyle(Paint.Style.STROKE);
                 mMinutesPaint.setColor(getResources().getColor(R.color.ambient_minute, null));
                 mStepsPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
+                getTotalSteps();
             } else {
                 mHoursPaint.setColor(getResources().getColor(R.color.clemson_hour_text, null));
                 mHoursPaint.setStyle(Paint.Style.FILL);
@@ -423,7 +441,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                             + (0.4 * mSecondsPaint.getTextSize()));
                     canvas.drawText(second, secondX, secondY, mSecondsPaint);
                 }
-                if(mShowSteps) {
+                if(mShowFootpath) {
                     getTotalSteps();
                     String stepsString = mStepCount + "";
                     canvas.drawText(stepsString, mCenterX - mStepsPaint.measureText(stepsString) * 0.5f,
@@ -436,13 +454,13 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     float y = 0f;
 
                     int numFeet = mStepCount / mStepsPerFoot;
-                    if (numFeet > feetX.length) numFeet = feetX.length;
+                    if (numFeet > footPathX.length) numFeet = footPathX.length;
                 //    canvas.drawText(mStepsPerFoot + " steps/foot", mCenterX, mCenterY + 55, mStepsPaint);
                 //    canvas.drawText(numFeet + " total feet", mCenterX, mCenterY + 70, mStepsPaint);
 
                     for (i = 0; i < numFeet; i++) {
-                        x += feetX[i];
-                        y -= feetY[i];
+                        x += footPathX[i];
+                        y -= footPathY[i];
                         if (i < 4 || i > 7) {
                             if (whichFoot) {
                                 bm = mLeftFoot;
@@ -470,8 +488,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
 
         }
-        float[] feetX = new float[] {   7f, 25f,  5f, 25f, 15f, 22f, 20f, 20f, 16f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f };
-        float[] feetY = new float[] {-250f,  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
+
         /**
          * Starts the {@link #mUpdateTimeHandler} timer if it should be running and isn't currently
          * or stops it if it shouldn't be running but currently is.
@@ -530,9 +547,83 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
+            Wearable.DataApi.addListener(mGoogleApiClient, onDataChangedListener);
+            Wearable.DataApi.getDataItems(mGoogleApiClient).setResultCallback(onConnectedResultCallback);
             mStepsRequested = false;
             subscribeToSteps();
             getTotalSteps();
+        }
+
+        private final DataApi.DataListener onDataChangedListener = new DataApi.DataListener() {
+
+            @Override
+            public void onDataChanged(DataEventBuffer dataEventBuffer) {
+                for (DataEvent event : dataEventBuffer) {
+                    if (event.getType() == DataEvent.TYPE_CHANGED) {
+                        DataItem item = event.getDataItem();
+                        updateParamsForDataItem(item);
+                    }
+                }
+
+                dataEventBuffer.release();
+                if (isVisible() && !isInAmbientMode()) {
+                    invalidate();
+                }
+            }
+        };
+
+        private final ResultCallback<DataItemBuffer> onConnectedResultCallback =
+                new ResultCallback<DataItemBuffer>() {
+                    @Override
+                    public void onResult(@NonNull DataItemBuffer dataItems) {
+                        for (DataItem item : dataItems) {
+                            updateParamsForDataItem(item);
+                        }
+
+                        dataItems.release();
+                        if (isVisible() && !isInAmbientMode()) {
+                            invalidate();
+                        }
+                    }
+                };
+
+        private void updateParamsForDataItem(DataItem item) {
+            if ((item.getUri().getPath()).equals("/watch_face_config_nohands")) {
+                DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                if (dataMap.containsKey("hour_color")) {
+                    int c = dataMap.getInt("hour_color");
+                    mHoursPaint.setColor(c);
+                }
+                if (dataMap.containsKey("minute_color")) {
+                    int c = dataMap.getInt("minute_color");
+                    mMinutesPaint.setColor(c);
+                }
+                if (dataMap.containsKey("seconds_color")) {
+                    int c = dataMap.getInt("seconds_color");
+                    mSecondsPaint.setColor(c);
+                }
+                if (dataMap.containsKey("footpath_color")) {
+                    int c = dataMap.getInt("footpath_color");
+                    mFeetPaint.setColor(c);
+                }
+                if (dataMap.containsKey("show_seconds")) {
+                    boolean b = dataMap.getBoolean("show_seconds");
+                    mShowSeconds = b;
+                }
+                if (dataMap.containsKey("show_stepcount")) {
+                    boolean b = dataMap.getBoolean("show_stepcount");
+                    mShowStepCount = b;
+                }
+                if (dataMap.containsKey("show_footpath")) {
+                    boolean b = dataMap.getBoolean("show_footpath");
+                    mShowFootpath = b;
+                }
+                if (dataMap.containsKey("show_date")) {
+                    boolean b = dataMap.getBoolean("show_date");
+                    mShowDate = b;
+                }
+                invalidate();
+            }
         }
 
         private void subscribeToSteps() {

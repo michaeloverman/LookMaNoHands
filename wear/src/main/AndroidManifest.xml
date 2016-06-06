@@ -16,6 +16,8 @@
         <service
             android:name=".MyWatchFaceService"
             android:label="@string/my_digital_name"
+            android:allowEmbedded="true"
+            android:taskAffinity=""
             android:permission="android.permission.BIND_WALLPAPER" >
             <meta-data
                 android:name="android.service.wallpaper"
@@ -28,12 +30,23 @@
                 android:resource="@drawable/preview_digital_circular" />
             <meta-data
                 android:name="com.google.android.wearable.watchface.companionConfigurationAction"
-                android:value="tech.michaeloverman.android.mywatch.CONFIG_DIGITAL" />
+                android:value="tech.michaeloverman.android.mywatch.CONFIG_NOHANDS" />
+            <meta-data
+                android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
+                android:value="tech.michaeloverman.android.mywatch.CONFIG_NOHANDS" />
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
                 <category android:name="com.google.android.wearable.watchface.category.WATCH_FACE" />
             </intent-filter>
         </service>
+        <activity android:name=".MyWatchConfigActivity"
+                  android:label="No Hands Wear">
+            <intent-filter>
+                <action android:name="tech.michaeloverman.android.mywatch.CONFIG_NOHANDS" />
+                <category android:name="com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

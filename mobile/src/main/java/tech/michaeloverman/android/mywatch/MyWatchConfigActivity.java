@@ -5,23 +5,24 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.wearable.companion.WatchFaceCompanion;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 /**
@@ -29,8 +30,7 @@ import com.google.android.gms.wearable.Wearable;
  */
 public class MyWatchConfigActivity extends Activity
         implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        ResultCallback<DataApi.DataItemResult> {
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String PATH_WITH_FEATURE = "/mywatch_config/MyWatch";
     private static final String KEY_COLOR_HOURS = "COLOR_HOURS";
@@ -38,6 +38,14 @@ public class MyWatchConfigActivity extends Activity
     private static final String KEY_COLOR_SECONDS = "COLOR_SECONDS";
     private static final String KEY_SHOW_SECONDS = "SHOW_SECONDS";
 
+    private int mHourColor;
+    private int mMinuteColor;
+    private int mSecondsColor;
+    private int mFootpathColor;
+    private boolean mShowSeconds;
+    private boolean mShowStepCount;
+    private boolean mShowFootpath;
+    private boolean mShowDate;
 
     private String watchFacePeerId;
     private ComponentName mComponentName;
@@ -46,6 +54,7 @@ public class MyWatchConfigActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_mywatch_config);
         TextView title = (TextView) findViewById(R.id.title);
         watchFacePeerId = getIntent().getStringExtra(WatchFaceCompanion.EXTRA_PEER_ID);
@@ -57,6 +66,44 @@ public class MyWatchConfigActivity extends Activity
                 .addApi(Wearable.API)
                 .build();
 
+        Button OKbutton = (Button) findViewById(R.id.okay_button);
+        OKbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // get details of each config
+
+                // assign to variables
+
+
+                sendParamsAndFinish();
+            }
+        });
+
+        Button cancelButton = (Button) findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendParamsAndFinish();
+            }
+        });
+    }
+
+    private void sendParamsAndFinish() {
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create("/watch_face_config_nohands");
+        DataMap dataMap = putDataMapRequest.getDataMap();
+        dataMap.putInt("hour_color", mHourColor);
+        dataMap.putInt("minute_color", mMinuteColor);
+        dataMap.putInt("seconds_color", mSecondsColor);
+        dataMap.putInt("footpath_color", mFootpathColor);
+        dataMap.putBoolean("show_seconds", mShowSeconds);
+        dataMap.putBoolean("show_stepcount", mShowStepCount);
+        dataMap.putBoolean("show_footpath", mShowFootpath);
+        dataMap.putBoolean("show_date", mShowDate);
+
+        PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
+        Wearable.DataApi.putDataItem(myGoogleApiClient, putDataRequest);
+
+        finish();
     }
 
     @Override
@@ -75,7 +122,7 @@ public class MyWatchConfigActivity extends Activity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (watchFacePeerId != null) {
+    /*    if (watchFacePeerId != null) {
             Uri.Builder uriBuilder = new Uri.Builder();
             Uri uri = uriBuilder.scheme("wear")
                     .path(PATH_WITH_FEATURE)
@@ -85,7 +132,7 @@ public class MyWatchConfigActivity extends Activity
 
         } else {
             noConnectedDeviceDialog();
-        }
+        } */
     }
 
     private void noConnectedDeviceDialog() {
@@ -114,7 +161,6 @@ public class MyWatchConfigActivity extends Activity
         
     }
 
-    @Override
     public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
         if (dataItemResult.getStatus().isSuccess() && dataItemResult.getDataItem() != null) {
             DataItem configDataItem = dataItemResult.getDataItem();

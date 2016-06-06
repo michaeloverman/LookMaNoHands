@@ -13,7 +13,13 @@
     <string name="color_white">White</string>
     <string name="mywatch_config_minutes">Minutes</string>
     <string name="mywatch_config_seconds">Seconds</string>
-    <string name="mywatch_config_show_seconds">Show Seconds</string>
+    <string name="mywatch_config_show_seconds">Show Seconds?</string>
+    <string name="mywatch_config_footpath">Footpath and Step Count Color</string>
+    <string name="mywatch_config_show_date">Show Date?</string>
+    <string name="mywatch_config_show_footpath">Show Footpath?</string>
+    <string name="mywatch_config_show_stepcount">Show Step Count?</string>
+    <string name="cancel">Cancel</string>
+    <string name="okay">Okay</string>
 
     <string-array name="color_array">
         <item>@string/color_red</item>
