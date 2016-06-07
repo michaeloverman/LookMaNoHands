@@ -80,6 +80,9 @@ import java.util.concurrent.TimeUnit;
  * low-bit ambient mode, the text is drawn without anti-aliasing in ambient mode.
  */
 public class MyWatchFaceService extends CanvasWatchFaceService {
+
+    private static final boolean DEBUG = true;
+
     private static final Typeface HOUR_TYPEFACE =
             Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
     private static final Typeface MINUTE_TYPEFACE = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
@@ -108,6 +111,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             ResultCallback<DailyTotalResult> {
         GregorianCalendar mTime;
 
+        private static final boolean DEBUG = true;
+
         private SensorManager mSensorManager;
         private Sensor mSensor;
         private SensorEventListener mSensorEventListener;
@@ -125,11 +130,12 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         int mMinuteColor;
         int mSecondColor;
         int mFootpathColor;
+        private ColorFilter mColorFilter;
         int mBackgroundColor = Color.BLACK;
 
-        Bitmap mRightFoot, mLeftFoot, mRightFootHorz, mLeftFootHorz;
-        Drawable mRightDrawable, mLeftDrawable, mRightHorzDrawable, mLeftHorzDrawable;
-        Paint mFootpathPaint;
+        private Bitmap mRightFoot, mLeftFoot, mRightFootHorz, mLeftFootHorz;
+        private Drawable mRightDrawable, mLeftDrawable, mRightHorzDrawable, mLeftHorzDrawable;
+        private Paint mFootpathPaint;
 
         boolean mAmbient;
 
@@ -152,8 +158,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         float mHourRadius;
         float mMinuteRadius;
         float mSecondRadius;
-        boolean mShowSeconds = false;
-        boolean mShowFootpath = true;
+        boolean mShowSeconds;
+        boolean mShowFootpath;
         float mTextSize;
 
         /**
@@ -161,21 +167,24 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
          * disable anti-aliasing in ambient mode.
          */
         boolean mLowBitAmbient;
-        private Paint mStepsPaint;
+        private Paint mStepCountPaint;
 
         private boolean mRegisteredReceiver;
         private GoogleApiClient mGoogleApiClient;
         private boolean mStepsRequested;
         private int mStepCount;
-        private int mStepCountGoal = 7000;
+        private int mStepCountGoal = 9000;
         private int mStepsPerFoot;
         float[] mFootpathX = new float[] {   7f, 25f,  5f, 25f, 15f, 22f, 20f, 20f, 16f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f };
         float[] mFootpathY = new float[] {-250f,  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
+        float mStepCountX = mFootpathX[0] + 172;
+        float mStepCountY = -mFootpathY[0] - 25;
         private boolean mShowDate;
         private boolean mShowStepCount;
 
         @Override
         public void onCreate(SurfaceHolder holder) {
+            if (DEBUG) System.out.println("onCreate()");
             super.onCreate(holder);
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(MyWatchFaceService.this)
@@ -215,8 +224,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             mTime = new GregorianCalendar();
 
-            mStepsPaint = new Paint();
-            mStepsPaint = createTextPaint(mFootpathColor, MINUTE_TYPEFACE);
+            mStepCountPaint = new Paint();
+            mStepCountPaint = createTextPaint(Color.WHITE, MINUTE_TYPEFACE);
 
             mStepsRequested = false;
 
@@ -229,8 +238,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mRightFootHorz = ( (BitmapDrawable) mRightHorzDrawable).getBitmap();
             mLeftFootHorz = ( (BitmapDrawable) mLeftHorzDrawable).getBitmap();
             mFootpathPaint = new Paint();
-            ColorFilter filter = new PorterDuffColorFilter(mFootpathColor, PorterDuff.Mode.SRC_IN);
-            mFootpathPaint.setColorFilter(filter);
+            mColorFilter = new PorterDuffColorFilter(mFootpathColor, PorterDuff.Mode.SRC_IN);
+            mFootpathPaint.setColorFilter(mColorFilter);
             mStepsPerFoot = mStepCountGoal / mFootpathX.length;
 
         /*    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -267,6 +276,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private Paint createTextPaint(int textColor, Typeface type) {
+            if (DEBUG) System.out.println("createTextPaint() " + textColor);
             Paint paint = new Paint();
             paint.setColor(textColor);
             paint.setTypeface(type);
@@ -278,6 +288,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onVisibilityChanged(boolean visible) {
             super.onVisibilityChanged(visible);
+            if (DEBUG) System.out.println("onVisibilityChanged" + visible);
 
             if (visible) {
                 mGoogleApiClient.connect();
@@ -322,6 +333,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onApplyWindowInsets(WindowInsets insets) {
             super.onApplyWindowInsets(insets);
+            if (DEBUG) System.out.println("onApplyWindowInsets()");
 
             // Load resources that have alternate values for round watches.
             Resources resources = MyWatchFaceService.this.getResources();
@@ -334,12 +346,14 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mHoursPaint.setTextSize(mTextSize);
             mMinutesPaint.setTextSize(mTextSize * 0.5f);
             mSecondsPaint.setTextSize(mTextSize * 0.3f);
-            mStepsPaint.setTextSize(15f);
+            mStepCountPaint.setTextSize(15f);
         }
 
         @Override
         public void onPropertiesChanged(Bundle properties) {
             super.onPropertiesChanged(properties);
+            if (DEBUG) System.out.println("onPropertiesChanged()");
+
             mLowBitAmbient = properties.getBoolean(PROPERTY_LOW_BIT_AMBIENT, false);
             burnInProtectionModeFlag = properties.getBoolean(PROPERTY_BURN_IN_PROTECTION, false);
 
@@ -355,6 +369,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onAmbientModeChanged(boolean inAmbientMode) {
+            if (DEBUG) System.out.println("onAmbientModeChanged() = " + inAmbientMode);
             super.onAmbientModeChanged(inAmbientMode);
 /*            if (mAmbient != inAmbientMode) {
                 mAmbient = inAmbientMode;
@@ -383,21 +398,26 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @TargetApi(Build.VERSION_CODES.M)
         private void updateColorsAndSteps() {
+            if (DEBUG) System.out.println("updateColorsAndSteps");
             if (isInAmbientMode()) {
                 mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
                 mHoursPaint.setStyle(Paint.Style.STROKE);
                 mMinutesPaint.setColor(getResources().getColor(R.color.ambient_minute, null));
-                mStepsPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
+                //mFootpathPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
 
             } else {
                 mHoursPaint.setColor(mHourColor);
                 mHoursPaint.setStyle(Paint.Style.FILL);
                 mMinutesPaint.setColor(mMinuteColor);
+            //    mColorFilter = new PorterDuffColorFilter(mFootpathColor, PorterDuff.Mode.SRC_IN);
+            //    mFootpathPaint.setColorFilter(mColorFilter);
                 getTotalSteps();
             }
         }
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
+            if (DEBUG) System.out.println("onDraw()");
+
             // Draw the background.
             if (isInAmbientMode()) {
                 canvas.drawColor(Color.BLACK);
@@ -435,7 +455,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             canvas.drawText(hour, hourX, hourY, mHoursPaint);
 
-            if (!isInAmbientMode()) {
+            if (!mAmbient) {
+                if (DEBUG) System.out.println("...not in Ambient()");
                 if(mShowSeconds) {
                     int secondsInt = mTime.get(Calendar.SECOND);
                     String second = String.format("%02d", secondsInt);
@@ -446,6 +467,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                             + (0.4 * mSecondsPaint.getTextSize()));
                     canvas.drawText(second, secondX, secondY, mSecondsPaint);
                 }
+                if (DEBUG) System.out.println("mShowFootpath = " + mShowFootpath);
                 if(mShowFootpath) {
                     //getTotalSteps();
 
@@ -457,9 +479,9 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
                     int numFeet = mStepCount / mStepsPerFoot;
                     if (numFeet > mFootpathX.length) numFeet = mFootpathX.length;
-                //    canvas.drawText(mStepsPerFoot + " steps/foot", mCenterX, mCenterY + 55, mStepsPaint);
-                //    canvas.drawText(numFeet + " total feet", mCenterX, mCenterY + 70, mStepsPaint);
-
+                //    canvas.drawText(mStepsPerFoot + " steps/foot", mCenterX, mCenterY + 55, mFootpathPaint);
+                //    canvas.drawText(numFeet + " total feet", mCenterX, mCenterY + 70, mFootpathPaint);
+                    if (DEBUG) System.out.println(numFeet + " feet to be printed");
                     for (i = 0; i < numFeet; i++) {
                         x += mFootpathX[i];
                         y -= mFootpathY[i];
@@ -485,9 +507,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 }
                 if (mShowStepCount) {
                     String stepsString = mStepCount + "";
-                    canvas.drawText(stepsString, mCenterX - mStepsPaint.measureText(stepsString) * 0.5f,
-                            mCenterY - mStepsPaint.getTextSize() * 0.5f, mStepsPaint);
-
+                    canvas.drawText(stepsString, mStepCountX, mStepCountY, mStepCountPaint);
+                    if (DEBUG) System.out.println("Just printed " + mStepCount + " steps");
                 }
                 if (mShowDate) {
 
@@ -532,6 +553,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private void getTotalSteps() {
+            if (DEBUG) System.out.println("getTotalSteps()");
             if ((mGoogleApiClient != null)
                     && (mGoogleApiClient.isConnected())
                     && (!mStepsRequested)) {
@@ -547,6 +569,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             super.onSurfaceChanged(holder, format, width, height);
+            if (DEBUG) System.out.println("onSurfaceChanged()");
 
             mCenterX = width / 2f;
             mCenterY = height / 2f;
@@ -557,6 +580,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
+            if (DEBUG) System.out.println("onConnected()");
             Wearable.DataApi.addListener(mGoogleApiClient, onDataChangedListener);
             Wearable.DataApi.getDataItems(mGoogleApiClient).setResultCallback(onConnectedResultCallback);
             mStepsRequested = false;
@@ -565,6 +589,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private final DataApi.DataListener onDataChangedListener = new DataApi.DataListener() {
+        //    System.out.println("onDataChangedListener");
 
             @Override
             public void onDataChanged(DataEventBuffer dataEventBuffer) {
@@ -584,6 +609,9 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         private final ResultCallback<DataItemBuffer> onConnectedResultCallback =
                 new ResultCallback<DataItemBuffer>() {
+
+                //    System.out.println("onConnectedResultCallback");
+
                     @Override
                     public void onResult(@NonNull DataItemBuffer dataItems) {
                         for (DataItem item : dataItems) {
@@ -598,40 +626,35 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 };
 
         private void updateParamsForDataItem(DataItem item) {
+            if (DEBUG) System.out.println("updateParamsForDataItem");
             if ((item.getUri().getPath()).equals("/watch_face_config_nohands")) {
 
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                 if (dataMap.containsKey("hour_color")) {
-                    int c = dataMap.getInt("hour_color");
-                    mHoursPaint.setColor(c);
+                    mHourColor = dataMap.getInt("hour_color");
                 }
                 if (dataMap.containsKey("minute_color")) {
-                    int c = dataMap.getInt("minute_color");
-                    mMinutesPaint.setColor(c);
+                    mMinuteColor= dataMap.getInt("minute_color");
                 }
                 if (dataMap.containsKey("seconds_color")) {
-                    int c = dataMap.getInt("seconds_color");
-                    mSecondsPaint.setColor(c);
+                    mSecondColor = dataMap.getInt("seconds_color");
                 }
                 if (dataMap.containsKey("footpath_color")) {
-                    int c = dataMap.getInt("footpath_color");
-                    mFootpathPaint.setColor(c);
+                    mFootpathColor = dataMap.getInt("footpath_color");
+                    mColorFilter = new PorterDuffColorFilter(mFootpathColor, PorterDuff.Mode.SRC_IN);
+                    mFootpathPaint.setColorFilter(mColorFilter);
                 }
                 if (dataMap.containsKey("show_seconds")) {
-                    boolean b = dataMap.getBoolean("show_seconds");
-                    mShowSeconds = b;
+                    mShowSeconds = dataMap.getBoolean("show_seconds");
                 }
                 if (dataMap.containsKey("show_stepcount")) {
-                    boolean b = dataMap.getBoolean("show_stepcount");
-                    mShowStepCount = b;
+                    mShowStepCount = dataMap.getBoolean("show_stepcount");
                 }
                 if (dataMap.containsKey("show_footpath")) {
-                    boolean b = dataMap.getBoolean("show_footpath");
-                    mShowFootpath = b;
+                    mShowFootpath = dataMap.getBoolean("show_footpath");
                 }
                 if (dataMap.containsKey("show_date")) {
-                    boolean b = dataMap.getBoolean("show_date");
-                    mShowDate = b;
+                    mShowDate = dataMap.getBoolean("show_date");
                 }
                 invalidate();
             }
