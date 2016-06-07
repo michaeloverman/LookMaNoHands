@@ -81,7 +81,7 @@ public class MyWatchConfigActivity extends Activity
                 mShowFootpath = ((Switch) findViewById(R.id.show_footpath)).isChecked();
                 mShowDate = ((Switch) findViewById(R.id.show_date)).isChecked();
 
-
+                System.out.println("data retrieved, sending to wear");
 
                 sendParamsAndFinish();
             }
