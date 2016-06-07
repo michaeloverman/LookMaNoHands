@@ -30,4 +30,44 @@
         <item>@string/color_purple</item>
         <item>@string/color_white</item>
     </string-array>
+
+    <string-array name="stepcount_goal_entries">
+        <item>1000</item>
+        <item>2000</item>
+        <item>3000</item>
+        <item>4000</item>
+        <item>5000</item>
+        <item>6000</item>
+        <item>7000</item>
+        <item>8000</item>
+        <item>9000</item>
+        <item>10000</item>
+        <item>11000</item>
+        <item>12000</item>
+        <item>13000</item>
+        <item>14000</item>
+        <item>15000</item>
+        <item>16000</item>
+        <item>17000</item>
+        <item>18000</item>
+        <item>19000</item>
+        <item>20000</item>
+    </string-array>
+
+    <string-array name="color_scheme_entries">
+        <item>Custom</item>
+        <item>WVU</item>
+        <item>Northwestern</item>
+        <item>JMU</item>
+        <item>Clemson</item>
+        <item>Virginia Tech</item>
+        <item>UVA</item>
+        <item>William & Mary</item>
+        <item>The Ohio State</item>
+        <item>Alabama</item>
+        <item>Harvard</item>
+        <item>Ithaca College</item>
+        <item>Cornell University</item>
+        <item>Penn State</item>
+    </string-array>
 </resources>

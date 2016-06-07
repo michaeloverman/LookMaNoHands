@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <PreferenceCategory
+        android:title="@string/general_settings"
+        android:key="pref_key_general_settings"
+        android:width="match_parent"
+        android:height="match_parent" >
+        <CheckBoxPreference
+            android:key="show_seconds"
+            android:title="@string/mywatch_config_show_seconds"
+            android:defaultValue="false"
+            android:persistent="true"
+            android:summary="Show seconds when in interactive mode"/>
+        <CheckBoxPreference
+            android:key="show_date"
+            android:title="@string/mywatch_config_show_date"
+            android:defaultValue="false"
+            android:persistent="true"
+            android:summary="Show the date when interactive"/>
+        <CheckBoxPreference
+            android:key="show_footpath"
+            android:title="@string/mywatch_config_show_footpath"
+            android:defaultValue="true"
+            android:persistent="true"
+            android:summary="Show a path of footprints representing fraction of step count goal" />
+        <CheckBoxPreference
+            android:key="show_stepcount"
+            android:title="@string/mywatch_config_show_stepcount"
+            android:defaultValue="true"
+            android:persistent="true"
+            android:summary="Show actual number of steps taken" />
+        <ListPreference
+            android:key="stepcount_goal"
+            android:title="Step Count Goal"
+            android:defaultValue="10000"
+            android:entries="@string:stepcount_goal_entries" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/color_settings"
+        android:key="pref_key_color_settings">
+        <ListPreference
+            android:key="color_scheme"
+            android:title="Color Scheme"
+            android:summary="Select the desired color combination"
+            android:entries="@string:color_scheme_entries"/>
+        <PreferenceScreen
+            android:key="button_custom_color_key"
+            android:title="Choose Custom Colors"
+            android:persistent="false">
+            <ListPreference
+                android:key="hour_color_key"
+                android:persistent="true"
+                android:title="Hour Color"
+                android:default="White"
+                android:entries="@string:color_array" />
+            <ListPreference
+                android:key="minute_color_key"
+                android:persistent="true"
+                android:title="Minute Color"
+                android:default="White"
+                android:entries="@string:color_array" />
+            <ListPreference
+                android:key="second_color_key"
+                android:persistent="true"
+                android:title="Second Color"
+                android:default="White"
+                android:entries="@string:color_array" />
+            <ListPreference
+                android:key="footpath_color_key"
+                android:persistent="true"
+                android:title="Footpath Color"
+                android:default="White"
+                android:entries="@string:color_array" />
+
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
