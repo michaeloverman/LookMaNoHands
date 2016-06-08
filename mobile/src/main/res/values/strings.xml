@@ -20,6 +20,14 @@
     <string name="mywatch_config_show_stepcount">Show Step Count?</string>
     <string name="cancel">Cancel</string>
     <string name="okay">Okay</string>
+    <string name="general_settings">General Settings</string>
+    <string name="color_settings">Colors</string>
+    <string name="show_seconds">Show Seconds?</string>
+    <string name="show_date">Show Date?</string>
+    <string name="show_footpath">Show Footpath?</string>
+    <string name="show_stepcount">Show Step Count?</string>
+    <string name="step_count_goal">Step Count Goal</string>
+    <string name="color_config">Color Scheme Options</string>
 
     <string-array name="color_array">
         <item>@string/color_red</item>
@@ -62,7 +70,7 @@
         <item>Clemson</item>
         <item>Virginia Tech</item>
         <item>UVA</item>
-        <item>William & Mary</item>
+        <item>William and Mary</item>
         <item>The Ohio State</item>
         <item>Alabama</item>
         <item>Harvard</item>

@@ -5,74 +5,98 @@
     <PreferenceCategory
         android:title="@string/general_settings"
         android:key="pref_key_general_settings"
-        android:width="match_parent"
-        android:height="match_parent" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <CheckBoxPreference
             android:key="show_seconds"
             android:title="@string/mywatch_config_show_seconds"
             android:defaultValue="false"
             android:persistent="true"
-            android:summary="Show seconds when in interactive mode"/>
+            android:summary="Show seconds when in interactive mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <CheckBoxPreference
             android:key="show_date"
             android:title="@string/mywatch_config_show_date"
             android:defaultValue="false"
             android:persistent="true"
-            android:summary="Show the date when interactive"/>
+            android:summary="Show the date when interactive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <CheckBoxPreference
             android:key="show_footpath"
             android:title="@string/mywatch_config_show_footpath"
             android:defaultValue="true"
             android:persistent="true"
-            android:summary="Show a path of footprints representing fraction of step count goal" />
+            android:summary="Show a path of footprints representing fraction of step count goal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <CheckBoxPreference
             android:key="show_stepcount"
             android:title="@string/mywatch_config_show_stepcount"
             android:defaultValue="true"
             android:persistent="true"
-            android:summary="Show actual number of steps taken" />
+            android:summary="Show actual number of steps taken"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <ListPreference
             android:key="stepcount_goal"
             android:title="Step Count Goal"
             android:defaultValue="10000"
-            android:entries="@string:stepcount_goal_entries" />
+            android:entries="@array/stepcount_goal_entries"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/color_settings"
-        android:key="pref_key_color_settings">
+        android:key="pref_key_color_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <ListPreference
             android:key="color_scheme"
             android:title="Color Scheme"
             android:summary="Select the desired color combination"
-            android:entries="@string:color_scheme_entries"/>
+            android:entries="@array/color_scheme_entries"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <PreferenceScreen
             android:key="button_custom_color_key"
             android:title="Choose Custom Colors"
-            android:persistent="false">
+            android:persistent="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <ListPreference
                 android:key="hour_color_key"
                 android:persistent="true"
                 android:title="Hour Color"
-                android:default="White"
-                android:entries="@string:color_array" />
+                android:defaultValue="White"
+                android:entries="@array/color_array"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             <ListPreference
                 android:key="minute_color_key"
                 android:persistent="true"
                 android:title="Minute Color"
-                android:default="White"
-                android:entries="@string:color_array" />
+                android:defaultValue="White"
+                android:entries="@array/color_array"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             <ListPreference
                 android:key="second_color_key"
                 android:persistent="true"
                 android:title="Second Color"
-                android:default="White"
-                android:entries="@string:color_array" />
+                android:defaultValue="White"
+                android:entries="@array/color_array"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             <ListPreference
                 android:key="footpath_color_key"
                 android:persistent="true"
                 android:title="Footpath Color"
-                android:default="White"
-                android:entries="@string:color_array" />
+                android:defaultValue="White"
+                android:entries="@array/color_array"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
         </PreferenceScreen>
 

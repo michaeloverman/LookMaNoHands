@@ -9,9 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.wearable.companion.WatchFaceCompanion;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -52,7 +52,8 @@ public class MyWatchConfigActivity extends Activity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_mywatch_config);
-        TextView title = (TextView) findViewById(R.id.title);
+
+    //    TextView title = (TextView) findViewById(R.id.title);
         watchFacePeerId = getIntent().getStringExtra(WatchFaceCompanion.EXTRA_PEER_ID);
         mComponentName = getIntent().getParcelableExtra(WatchFaceCompanion.EXTRA_WATCH_FACE_COMPONENT);
 
@@ -71,7 +72,7 @@ public class MyWatchConfigActivity extends Activity
                 mMinuteColor = getColorInt(((Spinner) findViewById(R.id.minutes)).getSelectedItem().toString());
                 mSecondsColor = getColorInt(((Spinner) findViewById(R.id.seconds)).getSelectedItem().toString());
                 mFootpathColor = getColorInt(((Spinner) findViewById(R.id.footpath)).getSelectedItem().toString());
-                mShowSeconds = ((Switch) findViewById(R.id.show_seconds)).isChecked();
+                mShowSeconds = ((CheckBox) findViewById(R.id.show_seconds)).isChecked();
                 mShowStepCount = ((Switch) findViewById(R.id.show_stepcount)).isChecked();
                 mShowFootpath = ((Switch) findViewById(R.id.show_footpath)).isChecked();
                 mShowDate = ((Switch) findViewById(R.id.show_date)).isChecked();
