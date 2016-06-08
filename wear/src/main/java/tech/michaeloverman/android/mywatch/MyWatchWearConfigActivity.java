@@ -34,8 +34,8 @@ public class MyWatchWearConfigActivity extends Activity implements
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_config);
-        mHeader = (TextView) findViewById(R.id.header);
-        WearableListView listView = (WearableListView) findViewById(R.id.config_list);
+    //    mHeader = (TextView) findViewById(R.id.header);
+    //    WearableListView listView = (WearableListView) findViewById(R.id.config_list);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {

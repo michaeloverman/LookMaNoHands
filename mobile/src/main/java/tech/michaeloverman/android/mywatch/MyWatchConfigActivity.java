@@ -1,16 +1,16 @@
 package tech.michaeloverman.android.mywatch;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.wearable.companion.WatchFaceCompanion;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,10 +26,15 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import es.dmoral.coloromatic.ColorOMaticDialog;
+import es.dmoral.coloromatic.IndicatorMode;
+import es.dmoral.coloromatic.OnColorSelectedListener;
+import es.dmoral.coloromatic.colormode.ColorMode;
+
 /**
  * Created by Michael on 5/26/2016.
  */
-public class MyWatchConfigActivity extends Activity
+public class MyWatchConfigActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -46,10 +51,14 @@ public class MyWatchConfigActivity extends Activity
     private String watchFacePeerId;
     private ComponentName mComponentName;
     private GoogleApiClient mGoogleApiClient;
+    private Button mHourButton;
+    private Button OKButton;
+    private Button cancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         setContentView(R.layout.activity_mywatch_config);
 
@@ -63,43 +72,43 @@ public class MyWatchConfigActivity extends Activity
                 .addApi(Wearable.API)
                 .build();
 
-        Button OKbutton = (Button) findViewById(R.id.okay_button);
-        OKbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // get details of each config // assign to variables
-                mHourColor = getColorInt(((Spinner) findViewById(R.id.hours)).getSelectedItem().toString());
-                mMinuteColor = getColorInt(((Spinner) findViewById(R.id.minutes)).getSelectedItem().toString());
-                mSecondsColor = getColorInt(((Spinner) findViewById(R.id.seconds)).getSelectedItem().toString());
-                mFootpathColor = getColorInt(((Spinner) findViewById(R.id.footpath)).getSelectedItem().toString());
-                mShowSeconds = ((CheckBox) findViewById(R.id.show_seconds)).isChecked();
-                mShowStepCount = ((CheckBox) findViewById(R.id.show_stepcount)).isChecked();
-                mShowFootpath = ((CheckBox) findViewById(R.id.show_footpath)).isChecked();
-                mShowDate = ((CheckBox) findViewById(R.id.show_date)).isChecked();
-                mColorScheme = ((Spinner) findViewById(R.id.color_schemes)).getSelectedItem().toString();
+        mHourButton = (Button) findViewById(R.id.hours_color_button);
 
-                System.out.println("data retrieved, sending to wear");
-                System.out.println("  Hour: " + mHourColor);
-                System.out.println("  Minute: " + mMinuteColor);
-                System.out.println("  Seconds: " + mSecondsColor);
-                System.out.println("  Footpath: " + mFootpathColor);
-                System.out.println("  Show Seconds: " + mShowSeconds);
-                System.out.println("  Show Step Count: " + mShowStepCount);
-                System.out.println("  Show Footpath: " + mShowFootpath);
-                System.out.println("  Show Date: " + mShowDate);
-                System.out.println("  Color Scheme: " + mColorScheme);
 
-                sendParamsAndFinish();
-            }
-        });
+        OKButton = (Button) findViewById(R.id.okay_button);
+//        OKButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // get details of each config // assign to variables
+//                mHourColor = getColorInt(((Button) findViewById(R.id.hours_color_button)).getText().toString());
+//                mMinuteColor = getColorInt(((Spinner) findViewById(R.id.minutes)).getSelectedItem().toString());
+//                mSecondsColor = getColorInt(((Spinner) findViewById(R.id.seconds)).getSelectedItem().toString());
+//                mFootpathColor = getColorInt(((Spinner) findViewById(R.id.footpath)).getSelectedItem().toString());
+//                mShowSeconds = ((CheckBox) findViewById(R.id.show_seconds)).isChecked();
+//                mShowStepCount = ((CheckBox) findViewById(R.id.show_stepcount)).isChecked();
+//                mShowFootpath = ((CheckBox) findViewById(R.id.show_footpath)).isChecked();
+//                mShowDate = ((CheckBox) findViewById(R.id.show_date)).isChecked();
+//                mColorScheme = ((Spinner) findViewById(R.id.color_schemes)).getSelectedItem().toString();
 
-        Button cancelButton = (Button) findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendParamsAndFinish();
-            }
-        });
+//                System.out.println("data retrieved, sending to wear");
+//                System.out.println("  Hour: " + mHourColor);
+//                System.out.println("  Minute: " + mMinuteColor);
+//                System.out.println("  Seconds: " + mSecondsColor);
+//                System.out.println("  Footpath: " + mFootpathColor);
+//                System.out.println("  Show Seconds: " + mShowSeconds);
+//                System.out.println("  Show Step Count: " + mShowStepCount);
+//                System.out.println("  Show Footpath: " + mShowFootpath);
+//                System.out.println("  Show Date: " + mShowDate);
+//                System.out.println("  Color Scheme: " + mColorScheme);
+//        });
+
+        cancelButton = (Button) findViewById(R.id.cancel_button);
+//        cancelButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                sendParamsAndFinish();
+//            }
+//        });
     }
 
     private int getColorInt(String colorString) {
@@ -252,8 +261,60 @@ public class MyWatchConfigActivity extends Activity
         
     }
 
+//    public void getUserColorChoice() {
+//
+//    }
+//
+//    public void setNewColor(Button v, int i) {
+//        v.setBackgroundColor(i);
+//        v.setText(i + "");
+//    }
+//    public void openColorPicker() {
+//
+//        final Button view = mHourButton;
+//
+//        new ColorOMaticDialog.Builder()
+//                .initialColor(Color.WHITE)
+//                .colorMode(ColorMode.RGB) // RGB, ARGB, HVS
+//                .indicatorMode(IndicatorMode.HEX) // HEX or DECIMAL; Note that using HSV with IndicatorMode.HEX is not recommended
+//                .onColorSelected(new OnColorSelectedListener() {
+//                    @Override
+//                    public void onColorSelected(@ColorInt int i) {
+//                        // do your stuff
+//                        setNewColor(view, i);
+//                    }
+//                })
+//                .showColorIndicator(true) // Default false, choose to show text indicator showing the current color in HEX or DEC (see images) or not
+//                .create()
+//                .show(this.getSupportFragmentManager(), "ColorOMaticDialog");
+//    }
+
+    public void hourButtonClicked(View v) {
 
 
+        new ColorOMaticDialog.Builder()
+                .initialColor(Color.WHITE)
+                .colorMode(ColorMode.RGB) // RGB, ARGB, HVS
+                .indicatorMode(IndicatorMode.HEX) // HEX or DECIMAL; Note that using HSV with IndicatorMode.HEX is not recommended
+                .onColorSelected(new OnColorSelectedListener() {
+                    @Override
+                    public void onColorSelected(@ColorInt int i) {
+                        // do your stuff
+                        mHourColor = i;
+                        mHourButton.setBackgroundColor(i);
 
+                    }
+                })
+                .showColorIndicator(true) // Default false, choose to show text indicator showing the current color in HEX or DEC (see images) or not
+                .create()
+                .show(getSupportFragmentManager(), "ColorOMaticDialog");
 
-}
+    }
+
+    public void okButtonClicked(View v) {
+        Toast.makeText(MyWatchConfigActivity.this, "Okay Button Clicked", Toast.LENGTH_SHORT).show();
+    }
+    public void cancelButtonClicked(View v) {
+        Toast.makeText(MyWatchConfigActivity.this, "Cancel Clicked", Toast.LENGTH_SHORT).show();
+    }
+ }

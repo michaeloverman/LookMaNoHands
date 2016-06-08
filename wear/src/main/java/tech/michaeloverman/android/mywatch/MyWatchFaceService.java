@@ -169,7 +169,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         boolean mLowBitAmbient;
         private Paint mStepCountPaint;
 
-        private boolean mRegisteredReceiver;
+    //    private boolean mRegisteredReceiver;
         private GoogleApiClient mGoogleApiClient;
         private boolean mStepsRequested;
         private int mStepCount;
@@ -184,7 +184,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onCreate(SurfaceHolder holder) {
-            if (DEBUG) System.out.println("onCreate()");
+        //    if (DEBUG) System.out.println("onCreate()");
             super.onCreate(holder);
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(MyWatchFaceService.this)
@@ -276,7 +276,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private Paint createTextPaint(int textColor, Typeface type) {
-            if (DEBUG) System.out.println("createTextPaint() " + textColor);
+        //    if (DEBUG) System.out.println("createTextPaint() " + textColor);
             Paint paint = new Paint();
             paint.setColor(textColor);
             paint.setTypeface(type);
@@ -288,7 +288,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onVisibilityChanged(boolean visible) {
             super.onVisibilityChanged(visible);
-            if (DEBUG) System.out.println("onVisibilityChanged" + visible);
+        //    if (DEBUG) System.out.println("onVisibilityChanged" + visible);
 
             if (visible) {
                 mGoogleApiClient.connect();
@@ -333,7 +333,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onApplyWindowInsets(WindowInsets insets) {
             super.onApplyWindowInsets(insets);
-            if (DEBUG) System.out.println("onApplyWindowInsets()");
+        //    if (DEBUG) System.out.println("onApplyWindowInsets()");
 
             // Load resources that have alternate values for round watches.
             Resources resources = MyWatchFaceService.this.getResources();
@@ -352,7 +352,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onPropertiesChanged(Bundle properties) {
             super.onPropertiesChanged(properties);
-            if (DEBUG) System.out.println("onPropertiesChanged()");
+        //    if (DEBUG) System.out.println("onPropertiesChanged()");
 
             mLowBitAmbient = properties.getBoolean(PROPERTY_LOW_BIT_AMBIENT, false);
             burnInProtectionModeFlag = properties.getBoolean(PROPERTY_BURN_IN_PROTECTION, false);
@@ -369,7 +369,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onAmbientModeChanged(boolean inAmbientMode) {
-            if (DEBUG) System.out.println("onAmbientModeChanged() = " + inAmbientMode);
+        //    if (DEBUG) System.out.println("onAmbientModeChanged() = " + inAmbientMode);
             super.onAmbientModeChanged(inAmbientMode);
 /*            if (mAmbient != inAmbientMode) {
                 mAmbient = inAmbientMode;
@@ -398,7 +398,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @TargetApi(Build.VERSION_CODES.M)
         private void updateColorsAndSteps() {
-            if (DEBUG) System.out.println("updateColorsAndSteps");
+       //     if (DEBUG) System.out.println("updateColorsAndSteps");
             if (isInAmbientMode()) {
                 mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
                 mHoursPaint.setStyle(Paint.Style.STROKE);
@@ -416,7 +416,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
-            if (DEBUG) System.out.println("onDraw()");
+        //    if (DEBUG) System.out.println("onDraw()");
 
             // Draw the background.
             if (isInAmbientMode()) {
@@ -456,7 +456,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             canvas.drawText(hour, hourX, hourY, mHoursPaint);
 
             if (!mAmbient) {
-                if (DEBUG) System.out.println("...not in Ambient()");
+        //        if (DEBUG) System.out.println("...not in Ambient()");
                 if(mShowSeconds) {
                     int secondsInt = mTime.get(Calendar.SECOND);
                     String second = String.format("%02d", secondsInt);
@@ -467,7 +467,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                             + (0.4 * mSecondsPaint.getTextSize()));
                     canvas.drawText(second, secondX, secondY, mSecondsPaint);
                 }
-                if (DEBUG) System.out.println("mShowFootpath = " + mShowFootpath);
+        //        if (DEBUG) System.out.println("mShowFootpath = " + mShowFootpath);
                 if(mShowFootpath) {
                     //getTotalSteps();
 
@@ -481,7 +481,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     if (numFeet > mFootpathX.length) numFeet = mFootpathX.length;
                 //    canvas.drawText(mStepsPerFoot + " steps/foot", mCenterX, mCenterY + 55, mFootpathPaint);
                 //    canvas.drawText(numFeet + " total feet", mCenterX, mCenterY + 70, mFootpathPaint);
-                    if (DEBUG) System.out.println(numFeet + " feet to be printed");
+        //            if (DEBUG) System.out.println(numFeet + " feet to be printed");
                     for (i = 0; i < numFeet; i++) {
                         x += mFootpathX[i];
                         y -= mFootpathY[i];
@@ -501,15 +501,16 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                         canvas.drawBitmap(bm, x, y, mFootpathPaint);
 
                         whichFoot = !whichFoot;
+
+                    }
+                    if (mShowStepCount) {
+                        String stepsString = mStepCount + "";
+                        canvas.drawText(stepsString, x + 35, y + 20, mStepCountPaint);
+                        //            if (DEBUG) System.out.println("Just printed " + mStepCount + " steps");
                     }
 
+                }
 
-                }
-                if (mShowStepCount) {
-                    String stepsString = mStepCount + "";
-                    canvas.drawText(stepsString, mStepCountX, mStepCountY, mStepCountPaint);
-                    if (DEBUG) System.out.println("Just printed " + mStepCount + " steps");
-                }
                 if (mShowDate) {
 
                 }
@@ -553,7 +554,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         }
 
         private void getTotalSteps() {
-            if (DEBUG) System.out.println("getTotalSteps()");
+    //        if (DEBUG) System.out.println("getTotalSteps()");
             if ((mGoogleApiClient != null)
                     && (mGoogleApiClient.isConnected())
                     && (!mStepsRequested)) {
@@ -569,7 +570,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         @Override
         public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             super.onSurfaceChanged(holder, format, width, height);
-            if (DEBUG) System.out.println("onSurfaceChanged()");
+    //        if (DEBUG) System.out.println("onSurfaceChanged()");
 
             mCenterX = width / 2f;
             mCenterY = height / 2f;
@@ -580,7 +581,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
-            if (DEBUG) System.out.println("onConnected()");
+    //        if (DEBUG) System.out.println("onConnected()");
             Wearable.DataApi.addListener(mGoogleApiClient, onDataChangedListener);
             Wearable.DataApi.getDataItems(mGoogleApiClient).setResultCallback(onConnectedResultCallback);
             mStepsRequested = false;
@@ -626,7 +627,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 };
 
         private void updateParamsForDataItem(DataItem item) {
-            if (DEBUG) System.out.println("updateParamsForDataItem");
+    //        if (DEBUG) System.out.println("updateParamsForDataItem");
             if ((item.getUri().getPath()).equals("/watch_face_config_nohands")) {
 
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();

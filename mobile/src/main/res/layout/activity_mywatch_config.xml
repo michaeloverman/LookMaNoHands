@@ -161,12 +161,12 @@
             android:layout_weight="1"
             android:gravity="right"
             android:layout_gravity="center_vertical"/>
-        <Spinner
-            android:id="@+id/hours"
-            android:entries="@array/color_array"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/hours_color_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:text="HourColor"
+            android:onClick="hourButtonClicked"/>
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
@@ -241,14 +241,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:onClick="okButtonClicked"/>
         <Button
             android:id="@+id/cancel_button"
             android:text="@string/cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:onClick="cancelButtonClicked"/>
     </LinearLayout>
 
 
