@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
-import android.widget.Switch;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -42,6 +41,7 @@ public class MyWatchConfigActivity extends Activity
     private boolean mShowStepCount;
     private boolean mShowFootpath;
     private boolean mShowDate;
+    private String mColorScheme;
 
     private String watchFacePeerId;
     private ComponentName mComponentName;
@@ -73,11 +73,21 @@ public class MyWatchConfigActivity extends Activity
                 mSecondsColor = getColorInt(((Spinner) findViewById(R.id.seconds)).getSelectedItem().toString());
                 mFootpathColor = getColorInt(((Spinner) findViewById(R.id.footpath)).getSelectedItem().toString());
                 mShowSeconds = ((CheckBox) findViewById(R.id.show_seconds)).isChecked();
-                mShowStepCount = ((Switch) findViewById(R.id.show_stepcount)).isChecked();
-                mShowFootpath = ((Switch) findViewById(R.id.show_footpath)).isChecked();
-                mShowDate = ((Switch) findViewById(R.id.show_date)).isChecked();
+                mShowStepCount = ((CheckBox) findViewById(R.id.show_stepcount)).isChecked();
+                mShowFootpath = ((CheckBox) findViewById(R.id.show_footpath)).isChecked();
+                mShowDate = ((CheckBox) findViewById(R.id.show_date)).isChecked();
+                mColorScheme = ((Spinner) findViewById(R.id.color_schemes)).getSelectedItem().toString();
 
                 System.out.println("data retrieved, sending to wear");
+                System.out.println("  Hour: " + mHourColor);
+                System.out.println("  Minute: " + mMinuteColor);
+                System.out.println("  Seconds: " + mSecondsColor);
+                System.out.println("  Footpath: " + mFootpathColor);
+                System.out.println("  Show Seconds: " + mShowSeconds);
+                System.out.println("  Show Step Count: " + mShowStepCount);
+                System.out.println("  Show Footpath: " + mShowFootpath);
+                System.out.println("  Show Date: " + mShowDate);
+                System.out.println("  Color Scheme: " + mColorScheme);
 
                 sendParamsAndFinish();
             }

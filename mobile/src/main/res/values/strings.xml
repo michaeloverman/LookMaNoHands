@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Look Ma, No Hands! Settings</string>
-    <string name="mywatch_config">Configure Watch Face</string>
+    <string name="mywatch_config">Watch Face Options</string>
     <string name="no_connected_device">Wearable Device Not Connected!</string>
     <string name="ok_button_label">OK</string>
     <string name="mywatch_config_hours">Hours</string>
@@ -14,7 +14,7 @@
     <string name="mywatch_config_minutes">Minutes</string>
     <string name="mywatch_config_seconds">Seconds</string>
     <string name="mywatch_config_show_seconds">Show Seconds?</string>
-    <string name="mywatch_config_footpath">Footpath and Step Count Color</string>
+    <string name="mywatch_config_footpath">Footpath/Step Count</string>
     <string name="mywatch_config_show_date">Show Date?</string>
     <string name="mywatch_config_show_footpath">Show Footpath?</string>
     <string name="mywatch_config_show_stepcount">Show Step Count?</string>
@@ -28,6 +28,8 @@
     <string name="show_stepcount">Show Step Count?</string>
     <string name="step_count_goal">Step Count Goal</string>
     <string name="color_config">Color Scheme Options</string>
+    <string name="color_schemes">Preset Color Schemes</string>
+    <string name="ten_thousand">10000</string>
 
     <string-array name="color_array">
         <item>@string/color_red</item>
