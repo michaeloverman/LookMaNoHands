@@ -2,7 +2,6 @@ package tech.michaeloverman.android.mywatch;
 
 import android.content.ComponentName;
 import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -62,10 +61,8 @@ public class MyWatchConfigActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setContentView(R.layout.activity_mywatch_config);
 
-    //    TextView title = (TextView) findViewById(R.id.title);
         watchFacePeerId = getIntent().getStringExtra(WatchFaceCompanion.EXTRA_PEER_ID);
         mComponentName = getIntent().getParcelableExtra(WatchFaceCompanion.EXTRA_WATCH_FACE_COMPONENT);
 
@@ -79,6 +76,10 @@ public class MyWatchConfigActivity extends AppCompatActivity
         mMinuteButton = (Button) findViewById(R.id.minutes_color_button);
         mSecondsButton = (Button) findViewById(R.id.seconds_color_button);
         mFootpathButton = (Button) findViewById(R.id.footpath_color_button);
+
+
+
+
 
         mOkButton = (Button) findViewById(R.id.okay_button);
         mCancelButton = (Button) findViewById(R.id.cancel_button);
@@ -106,31 +107,24 @@ public class MyWatchConfigActivity extends AppCompatActivity
 
     @Override
     protected void onStart() {
+        System.out.println("in onStart()");
         super.onStart();
         mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
+        System.out.println("in onStop()");
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+
         super.onStop();
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-    /*    if (watchFacePeerId != null) {
-            Uri.Builder uriBuilder = new Uri.Builder();
-            Uri uri = uriBuilder.scheme("wear")
-                    .path(PATH_WITH_FEATURE)
-                    .authority(watchFacePeerId)
-                    .build();
-            Wearable.DataApi.getDataItem(mGoogleApiClient, uri).setResultCallback(this);
 
-        } else {
-            noConnectedDeviceDialog();
-        } */
         Wearable.DataApi.addListener(mGoogleApiClient, onDataChangedListener);
         Wearable.DataApi.getDataItems(mGoogleApiClient).setResultCallback(onConnectedResultCallback);
 
@@ -164,18 +158,23 @@ public class MyWatchConfigActivity extends AppCompatActivity
             DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
             if (dataMap.containsKey("hour_color")) {
                 mHourColor = dataMap.getInt("hour_color");
+                mHourButton.setBackgroundColor(mHourColor);
             }
             if (dataMap.containsKey("minute_color")) {
                 mMinuteColor = dataMap.getInt("minute_color");
+                mMinuteButton.setBackgroundColor(mMinuteColor);
             }
             if (dataMap.containsKey("seconds_color")) {
                 mSecondsColor = dataMap.getInt("seconds_color");
+                mSecondsButton.setBackgroundColor(mSecondsColor);
             }
             if (dataMap.containsKey("footpath_color")) {
                 mFootpathColor = dataMap.getInt("footpath_color");
+                mFootpathButton.setBackgroundColor(mFootpathColor);
             }
             if (dataMap.containsKey("show_seconds")) {
                 mShowSeconds = dataMap.getBoolean("show_seconds");
+
             }
             if (dataMap.containsKey("show_stepcount")) {
                 mShowStepCount = dataMap.getBoolean("show_stepcount");
@@ -235,6 +234,21 @@ public class MyWatchConfigActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
                         button.setBackgroundColor(selectedColor);
+                        int id = button.getId();
+                        switch (id) {
+                            case R.id.hours_color_button:
+                                mHourColor = selectedColor;
+                                break;
+                            case R.id.minutes_color_button:
+                                mMinuteColor = selectedColor;
+                                break;
+                            case R.id.seconds_color_button:
+                                mSecondsColor = selectedColor;
+                                break;
+                            case R.id.footpath_color_button:
+                                mFootpathColor = selectedColor;
+                                break;
+                        }
 
                     }
                 })
@@ -249,10 +263,10 @@ public class MyWatchConfigActivity extends AppCompatActivity
     }
 
     public void okButtonClicked(View v) {
-        mHourColor = ((ColorDrawable) mHourButton.getBackground()).getColor();
-        mMinuteColor = ((ColorDrawable) mMinuteButton.getBackground()).getColor();
-        mSecondsColor = ((ColorDrawable) mSecondsButton.getBackground()).getColor();
-        mFootpathColor = ((ColorDrawable) mFootpathButton.getBackground()).getColor();
+//        mHourColor = ((ColorDrawable) mHourButton.getBackground()).getColor();
+//        mMinuteColor = ((ColorDrawable) mMinuteButton.getBackground()).getColor();
+//        mSecondsColor = ((ColorDrawable) mSecondsButton.getBackground()).getColor();
+//        mFootpathColor = ((ColorDrawable) mFootpathButton.getBackground()).getColor();
         mShowSeconds = ((CheckBox) findViewById(R.id.show_seconds)).isChecked();
         mShowStepCount = ((CheckBox) findViewById(R.id.show_stepcount)).isChecked();
         mShowFootpath = ((CheckBox) findViewById(R.id.show_footpath)).isChecked();
