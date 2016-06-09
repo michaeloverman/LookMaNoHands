@@ -148,87 +148,36 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
     </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+     <Button
+        android:id="@+id/hours_color_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp">
-        <TextView
-            android:text="@string/mywatch_config_hours"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:layout_gravity="center_vertical"/>
-        <Button
-            android:id="@+id/hours_color_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="HourColor"
-            android:onClick="hourButtonClicked"/>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:text="Hours Color"
+        android:onClick="colorButtonClicked"
+        android:layout_gravity="center_horizontal"/>
+    <Button
+        android:id="@+id/minutes_color_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp">
-        <TextView
-            android:text="@string/mywatch_config_minutes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:layout_gravity="center_vertical"/>
-        <Spinner
-            android:id="@+id/minutes"
-            android:entries="@array/color_array"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-    </LinearLayout>
+        android:text="Minutes Color"
+        android:onClick="colorButtonClicked"
+        android:layout_gravity="center_horizontal"/>
+    <Button
+        android:id="@+id/seconds_color_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seconds Color"
+        android:onClick="colorButtonClicked"
+        android:layout_gravity="center_horizontal"/>
+    <Button
+        android:id="@+id/footpath_color_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Footpath Color"
+        android:onClick="colorButtonClicked"
+        android:layout_gravity="center_horizontal"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp">
-        <TextView
-            android:text="@string/mywatch_config_seconds"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:layout_gravity="center_vertical"/>
-        <Spinner
-            android:id="@+id/seconds"
-            android:entries="@array/color_array"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp">
-        <TextView
-            android:text="@string/mywatch_config_footpath"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:layout_gravity="center_vertical"/>
-        <Spinner
-            android:id="@+id/footpath"
-            android:entries="@array/color_array"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-    </LinearLayout>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
