@@ -110,6 +110,7 @@
             android:gravity="right"
             android:layout_gravity="center_vertical"/>
         <Spinner
+            android:id="@+id/stepcount_goal_spinner"
             android:key="stepcount_goal"
             android:title="Step Count Goal"
 
@@ -156,6 +157,9 @@
         android:background="@color/dark_red"
         android:onClick="colorButtonClicked"
         android:layout_gravity="center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+
          />
     <Button
         android:id="@+id/minutes_color_button"
@@ -164,7 +168,9 @@
         android:text="Minutes Color"
         android:background="@color/orange"
         android:onClick="colorButtonClicked"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
     <Button
         android:id="@+id/seconds_color_button"
         android:layout_width="wrap_content"
@@ -172,7 +178,9 @@
         android:text="Seconds Color"
         android:background="@color/light_grey"
         android:onClick="colorButtonClicked"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
     <Button
         android:id="@+id/footpath_color_button"
         android:layout_width="wrap_content"
@@ -180,7 +188,9 @@
         android:text="Footpath Color"
         android:background="@color/green"
         android:onClick="colorButtonClicked"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
 
 
     <LinearLayout

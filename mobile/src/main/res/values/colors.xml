@@ -3,4 +3,19 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="background">#000000</color>
+    <color name="ambient_minute">#666666</color>
+    <color name="ambient_hour">#bbbbbb</color>
+    <color name="wvu_hour" type="color">#00457c</color>
+    <color name="wvu_minute" type="color">#efb31d</color>
+    <color name="wvu_second" type="color">#CD910B</color>
+    <color name="wvu_footpath" type="color">#00235A</color>
+    <color name="jmu_hour_text">#450084</color>
+    <color name="jmu_minute_text">#dfd2aa</color>
+    <color name="uva_hour_text">#213465</color>
+    <color name="uva_minute_text">#f86d2b</color>
+    <color name="clemson_hour_text">#522d80</color>
+    <color name="clemson_minute_text">#f66733</color>
+    <color name="northwestern_minute_text">#4e2a84</color>
+    <color name="northwestern_hour_text">#401f68</color>
 </resources>

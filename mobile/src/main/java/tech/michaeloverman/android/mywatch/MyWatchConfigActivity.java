@@ -2,14 +2,17 @@ package tech.michaeloverman.android.mywatch;
 
 import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.wearable.companion.WatchFaceCompanion;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Spinner;
 
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
@@ -44,11 +47,19 @@ public class MyWatchConfigActivity extends AppCompatActivity
     private boolean mShowStepCount;
     private boolean mShowFootpath;
     private boolean mShowDate;
+    private int mStepCountGoal;
+
     private String mColorScheme;
 
     private String watchFacePeerId;
     private ComponentName mComponentName;
     private GoogleApiClient mGoogleApiClient;
+
+    private CheckBox mShowSecondsBox;
+    private CheckBox mShowStepCountBox;
+    private CheckBox mShowFootpathBox;
+    private CheckBox mShowDateBox;
+    private Spinner mGoalStepCountSpinner;
     private Button mHourButton;
     private Button mMinuteButton;
     private Button mSecondsButton;
@@ -56,6 +67,7 @@ public class MyWatchConfigActivity extends AppCompatActivity
 
     private Button mOkButton;
     private Button mCancelButton;
+    private Spinner mColorSchemeSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,20 +84,90 @@ public class MyWatchConfigActivity extends AppCompatActivity
                 .addApi(Wearable.API)
                 .build();
 
+        mShowSecondsBox = (CheckBox) findViewById(R.id.show_seconds);
+        mShowStepCountBox = (CheckBox) findViewById(R.id.show_stepcount);
+        mShowFootpathBox = (CheckBox) findViewById(R.id.show_footpath);
+        mShowDateBox = (CheckBox) findViewById(R.id.show_date);
+
+        mGoalStepCountSpinner = (Spinner) findViewById(R.id.stepcount_goal_spinner);
+        mGoalStepCountSpinner.setSelection(9);
+        mGoalStepCountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println("StepCountGoalSpinner onItemSelected()");
+                mStepCountGoal = (position * 1000) + 1000;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        mColorSchemeSpinner = (Spinner) findViewById(R.id.color_schemes);
+        mColorSchemeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setColorsToPresets(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         mHourButton = (Button) findViewById(R.id.hours_color_button);
         mMinuteButton = (Button) findViewById(R.id.minutes_color_button);
         mSecondsButton = (Button) findViewById(R.id.seconds_color_button);
         mFootpathButton = (Button) findViewById(R.id.footpath_color_button);
-
-
-
-
 
         mOkButton = (Button) findViewById(R.id.okay_button);
         mCancelButton = (Button) findViewById(R.id.cancel_button);
 
     }
 
+    private void setColorsToPresets(int position) {
+        String choice = mColorSchemeSpinner.getItemAtPosition(position).toString();
+
+        switch(choice) {
+            case "WVU":
+                System.out.println("WVU colors selected!!");
+                setButtonColors(R.color.wvu_hour, R.color.wvu_minute, R.color.wvu_second, R.color.wvu_footpath);
+                break;
+            case "Northwestern":
+                setButtonColors(R.color.northwestern_hour_text, R.color.northwestern_minute_text, R.color.northwestern_minute_text, R.color.northwestern_hour_text);
+                break;
+            case "JMU":
+                setButtonColors(R.color.jmu_hour_text, R.color.jmu_minute_text, R.color.jmu_minute_text, R.color.jmu_hour_text);
+                break;
+            case "Clemson":
+                setButtonColors(R.color.clemson_hour_text, R.color.clemson_minute_text, R.color.clemson_minute_text, R.color.clemson_hour_text);
+                break;
+            case "Virginia Tech":
+                setButtonColors(R.color.wvu_hour, R.color.wvu_minute, R.color.wvu_second, R.color.wvu_footpath);
+                break;
+            case "UVA":
+                setButtonColors(R.color.uva_hour_text, R.color.uva_minute_text, R.color.uva_minute_text, R.color.uva_hour_text);
+                break;
+            case "William & Mary":
+                setButtonColors(R.color.wvu_hour, R.color.wvu_minute, R.color.wvu_second, R.color.wvu_footpath);
+                break;
+            case "The Ohio State":
+                setButtonColors(R.color.wvu_hour, R.color.wvu_minute, R.color.wvu_second, R.color.wvu_footpath);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void setButtonColors(int h, int m, int s, int f) {
+        System.out.println("h: " + h + ", M: " + m + ", Sec: " + s);
+        mHourButton.setBackgroundColor(getResources().getColor(h));
+        mMinuteButton.setBackgroundColor(getResources().getColor(m));
+        mSecondsButton.setBackgroundColor(getResources().getColor(s));
+        mFootpathButton.setBackgroundColor(getResources().getColor(f));
+    }
 
     private void sendParamsAndFinish() {
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create("/watch_face_config_nohands");
@@ -98,6 +180,7 @@ public class MyWatchConfigActivity extends AppCompatActivity
         dataMap.putBoolean("show_stepcount", mShowStepCount);
         dataMap.putBoolean("show_footpath", mShowFootpath);
         dataMap.putBoolean("show_date", mShowDate);
+        dataMap.putInt("stepcount_goal", mStepCountGoal);
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest);
@@ -174,16 +257,19 @@ public class MyWatchConfigActivity extends AppCompatActivity
             }
             if (dataMap.containsKey("show_seconds")) {
                 mShowSeconds = dataMap.getBoolean("show_seconds");
-
+                mShowSecondsBox.setChecked(mShowSeconds);
             }
             if (dataMap.containsKey("show_stepcount")) {
                 mShowStepCount = dataMap.getBoolean("show_stepcount");
+                mShowStepCountBox.setChecked(mShowStepCount);
             }
             if (dataMap.containsKey("show_footpath")) {
                 mShowFootpath = dataMap.getBoolean("show_footpath");
+                mShowFootpathBox.setChecked(mShowFootpath);
             }
             if (dataMap.containsKey("show_date")) {
                 mShowDate = dataMap.getBoolean("show_date");
+                mShowDateBox.setChecked(mShowDate);
             }
 
         }
@@ -263,10 +349,10 @@ public class MyWatchConfigActivity extends AppCompatActivity
     }
 
     public void okButtonClicked(View v) {
-//        mHourColor = ((ColorDrawable) mHourButton.getBackground()).getColor();
-//        mMinuteColor = ((ColorDrawable) mMinuteButton.getBackground()).getColor();
-//        mSecondsColor = ((ColorDrawable) mSecondsButton.getBackground()).getColor();
-//        mFootpathColor = ((ColorDrawable) mFootpathButton.getBackground()).getColor();
+        mHourColor = ((ColorDrawable) mHourButton.getBackground()).getColor();
+        mMinuteColor = ((ColorDrawable) mMinuteButton.getBackground()).getColor();
+        mSecondsColor = ((ColorDrawable) mSecondsButton.getBackground()).getColor();
+        mFootpathColor = ((ColorDrawable) mFootpathButton.getBackground()).getColor();
         mShowSeconds = ((CheckBox) findViewById(R.id.show_seconds)).isChecked();
         mShowStepCount = ((CheckBox) findViewById(R.id.show_stepcount)).isChecked();
         mShowFootpath = ((CheckBox) findViewById(R.id.show_footpath)).isChecked();
