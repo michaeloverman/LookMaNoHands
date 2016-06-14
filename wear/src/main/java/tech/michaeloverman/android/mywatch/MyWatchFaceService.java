@@ -66,11 +66,10 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -511,8 +510,9 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             canvas.drawText(minute, minuteX, minuteY, mMinutesPaint);
             if (mShowDate && !isInAmbientMode()) {
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat(mDateFormat);
-                String dateString = dateFormat.format(new Date());
+                //SimpleDateFormat dateFormat = new SimpleDateFormat(mDateFormat);
+                String dateString = mTime.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.US)
+                        + ", " + mTime.get(Calendar.DAY_OF_MONTH);
                 float x = mCenterX - (mDatePaint.measureText(dateString) / 2f);
                 canvas.drawText(dateString, x, 300, mDatePaint);
             }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="config_options_array">
+        <item>Show Seconds?</item>
+        <item>Show Step Count?</item>
+        <item>Show Footpath?</item>
+        <item>Show Date?</item>
+        <item>Step Count Goal...</item>
+    </string-array>
+</resources>

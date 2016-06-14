@@ -39,7 +39,7 @@
                 <category android:name="com.google.android.wearable.watchface.category.WATCH_FACE" />
             </intent-filter>
         </service>
-        <activity android:name=".MyWatchConfigActivity"
+        <activity android:name=".MyWatchWearConfigActivity"
                   android:label="No Hands Wear">
             <intent-filter>
                 <action android:name="tech.michaeloverman.android.mywatch.CONFIG_NOHANDS" />

@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                              xmlns:app="http://schemas.android.com/apk/res-auto"
+                                              android:id="@+id/content"
+                                              android:orientation="vertical"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="match_parent"
+                                              android:layout_gravity="center_horizontal"
+                                              android:gravity="center_horizontal">
     <TextView
         android:text="Preferences"
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        app:layout_box="left|top|right"/>
     <android.support.wearable.view.WearableListView
+        android:id="@+id/config_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        app:layout_box="left|right">
         
     </android.support.wearable.view.WearableListView>
-</LinearLayout>
+</android.support.wearable.view.BoxInsetLayout>

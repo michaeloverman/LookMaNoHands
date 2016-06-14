@@ -136,25 +136,52 @@ public class MyWatchConfigActivity extends AppCompatActivity
                 setButtonColors(R.color.wvu_hour, R.color.wvu_minute, R.color.wvu_second, R.color.wvu_footpath);
                 break;
             case "Northwestern":
-                setButtonColors(R.color.northwestern_hour_text, R.color.northwestern_minute_text, R.color.northwestern_minute_text, R.color.northwestern_hour_text);
+                setButtonColors(R.color.northwestern_hour, R.color.northwestern_minute, R.color.northwestern_second, R.color.northwestern_footpath);
                 break;
             case "JMU":
-                setButtonColors(R.color.jmu_hour_text, R.color.jmu_minute_text, R.color.jmu_minute_text, R.color.jmu_hour_text);
+                setButtonColors(R.color.jmu_hour_text, R.color.jmu_minute, R.color.jmu_second, R.color.jmu_footpath);
                 break;
             case "Clemson":
-                setButtonColors(R.color.clemson_hour_text, R.color.clemson_minute_text, R.color.clemson_minute_text, R.color.clemson_hour_text);
+                setButtonColors(R.color.clemson_hour, R.color.clemson_minute, R.color.clemson_second, R.color.clemson_footpath);
                 break;
             case "Virginia Tech":
-                setButtonColors(R.color.wvu_hour, R.color.wvu_minute, R.color.wvu_second, R.color.wvu_footpath);
+                setButtonColors(R.color.vatech_hour, R.color.vatech_minute, R.color.vatech_second, R.color.vatech_footpath);
                 break;
             case "UVA":
-                setButtonColors(R.color.uva_hour_text, R.color.uva_minute_text, R.color.uva_minute_text, R.color.uva_hour_text);
+                setButtonColors(R.color.uva_hour, R.color.uva_minute, R.color.uva_second, R.color.uva_footpath);
                 break;
             case "William & Mary":
-                setButtonColors(R.color.wvu_hour, R.color.wvu_minute, R.color.wvu_second, R.color.wvu_footpath);
+                setButtonColors(R.color.wandm_hour, R.color.wandm_minute, R.color.wandm_second, R.color.wandm_footpath);
                 break;
             case "The Ohio State":
-                setButtonColors(R.color.wvu_hour, R.color.wvu_minute, R.color.wvu_second, R.color.wvu_footpath);
+                setButtonColors(R.color.ohio_hour, R.color.ohio_minute, R.color.ohio_second, R.color.ohio_footpath);
+                break;
+            case "Alabama":
+                setButtonColors(R.color.alabama_hour, R.color.alabama_minute, R.color.alabama_second, R.color.alabama_footpath);
+                break;
+            case "Harvard":
+                setButtonColors(R.color.harvard_hour, R.color.harvard_minute, R.color.harvard_second, R.color.harvard_footpath);
+                break;
+            case "Ithaca College":
+                setButtonColors(R.color.ic_hour, R.color.ic_minute, R.color.ic_second, R.color.ic_footpath);
+                break;
+            case "Cornell":
+                setButtonColors(R.color.cornell_hour, R.color.cornell_minute, R.color.cornell_second, R.color.cornell_footpath);
+                break;
+            case "Penn State":
+                setButtonColors(R.color.penn_hour, R.color.penn_minute, R.color.penn_second, R.color.penn_footpath);
+                break;
+            case "Nature":
+                setButtonColors(R.color.nature_hour, R.color.nature_minute, R.color.nature_second, R.color.nature_footpath);
+                break;
+            case "Fresh":
+                setButtonColors(R.color.fresh_hour, R.color.fresh_minute, R.color.fresh_second, R.color.fresh_footpath);
+                break;
+            case "Icy":
+                setButtonColors(R.color.icy_hour, R.color.icy_minute, R.color.icy_second, R.color.icy_footpath);
+                break;
+            case "Nautical":
+                setButtonColors(R.color.nautical_hour, R.color.nautical_minute, R.color.nautical_second, R.color.nautical_footpath);
                 break;
             default:
                 break;

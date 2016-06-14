@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.wearable.view.BoxInsetLayout;
 import android.support.wearable.view.WearableListView;
+import android.view.View;
+import android.view.WindowInsets;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,7 +38,29 @@ public class MyWatchWearConfigActivity extends Activity implements
 
         setContentView(R.layout.activity_config);
     //    mHeader = (TextView) findViewById(R.id.header);
-    //    WearableListView listView = (WearableListView) findViewById(R.id.config_list);
+        WearableListView listView = (WearableListView) findViewById(R.id.config_list);
+        BoxInsetLayout content = (BoxInsetLayout) findViewById(R.id.content);
+        // BoxInsetLayout adds padding by default on round devices. Add some on square devices.
+        content.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                if (!insets.isRound()) {
+                    v.setPaddingRelative(
+                            (int) getResources().getDimensionPixelSize(R.dimen.content_padding_start),
+                            v.getPaddingTop(),
+                            v.getPaddingEnd(),
+                            v.getPaddingBottom());
+                }
+                return v.onApplyWindowInsets(insets);
+            }
+        });
+
+        listView.setHasFixedSize(true);
+        listView.setClickListener(this);
+        listView.addOnScrollListener(this);
+
+        String[] options = getResources().getStringArray(R.array.config_options_array);
+//        listView.setAdapter(new ConfigOptionsAdapter(options));
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
