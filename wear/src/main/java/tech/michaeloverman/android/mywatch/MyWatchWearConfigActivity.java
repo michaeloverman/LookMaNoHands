@@ -5,10 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.wearable.view.BoxInsetLayout;
-import android.support.wearable.view.WearableListView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -22,13 +21,15 @@ import com.google.android.gms.wearable.Wearable;
  * Created by Michael on 6/6/2016.
  */
 public class MyWatchWearConfigActivity extends Activity implements
-        WearableListView.ClickListener, WearableListView.OnScrollListener {
+        /*WearableListView.ClickListener, WearableListView.OnScrollListener*/
+        View.OnClickListener {
 
     private GoogleApiClient mGoogleApiClient;
     private boolean mShowSeconds;
     private boolean mShowDate;
     private boolean mShowFootpath;
     private boolean mShowStepCount;
+    private CheckBox mSecondsCheck, mDateCheck, mFootpathCheck, mStepcountCheck;
 
     private TextView mHeader;
     private int mStepCountGoal = 10000;
@@ -38,9 +39,17 @@ public class MyWatchWearConfigActivity extends Activity implements
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_config);
-    //    mHeader = (TextView) findViewById(R.id.header);
-        WearableListView listView = (WearableListView) findViewById(R.id.config_list);
         BoxInsetLayout content = (BoxInsetLayout) findViewById(R.id.content);
+
+        mSecondsCheck = (CheckBox) findViewById(R.id.show_seconds_check);
+        mSecondsCheck.setOnClickListener(this);
+        mDateCheck = (CheckBox) findViewById(R.id.show_date_check);
+        mDateCheck.setOnClickListener(this);
+        mFootpathCheck = (CheckBox) findViewById(R.id.show_footpath_check);
+        mFootpathCheck.setOnClickListener(this);
+        mStepcountCheck = (CheckBox) findViewById(R.id.show_stepcount_check);
+        mStepcountCheck.setOnClickListener(this);
+
         // BoxInsetLayout adds padding by default on round devices. Add some on square devices.
         content.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override
@@ -56,12 +65,6 @@ public class MyWatchWearConfigActivity extends Activity implements
             }
         });
 
-        listView.setHasFixedSize(true);
-        listView.setClickListener(this);
-        listView.addOnScrollListener(this);
-
-        String[] options = getResources().getStringArray(R.array.config_options_array);
-        listView.setAdapter(new ConfigOptionsAdapter(options));
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -93,6 +96,8 @@ public class MyWatchWearConfigActivity extends Activity implements
 
     @Override
     protected void onStop() {
+        sendParamsAndFinish();
+
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected())
             mGoogleApiClient.disconnect();
         super.onStop();
@@ -113,6 +118,7 @@ public class MyWatchWearConfigActivity extends Activity implements
         finish();
     }
 
+/*
     @Override
     public void onClick(WearableListView.ViewHolder viewHolder) {
 
@@ -138,27 +144,21 @@ public class MyWatchWearConfigActivity extends Activity implements
     @Override
     public void onCentralPositionChanged(int i) {
     }
+*/
 
-    private class ConfigOptionsAdapter extends WearableListView.Adapter {
-        private final String[] mOptions;
-
-        public ConfigOptionsAdapter(String[] options) {
-            mOptions = options;
-        }
-
-        @Override
-        public WearableListView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return null;
-        }
-
-        @Override
-        public void onBindViewHolder(WearableListView.ViewHolder holder, int position) {
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return 0;
+    @Override
+    public void onClick(View v) {
+        CheckBox choice = (CheckBox) v;
+        Boolean state = choice.isChecked();
+        if (mSecondsCheck.equals(choice)) {
+            mShowSeconds = state;
+        } else if (mDateCheck.equals(choice)) {
+            mShowDate = state;
+        } else if (mFootpathCheck.equals(choice)) {
+            mShowFootpath = state;
+        } else if (mStepcountCheck.equals(choice)) {
+            mShowStepCount = state;
         }
     }
+
 }

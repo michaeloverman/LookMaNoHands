@@ -7,34 +7,95 @@
                                               android:layout_height="match_parent"
                                               android:layout_gravity="center_horizontal"
                                               android:gravity="center_horizontal">
-    <TextView
-        android:text="Preferences"
-
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        app:layout_box="left|top|right"/>
-    <android.support.wearable.view.WearableListView
-        android:id="@+id/config_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        app:layout_box="left|right">
+        android:orientation="vertical">
         <TextView
-            android:text="Show Seconds?"
+            android:text="Preferences"
+            android:paddingTop="20dp"
+            android:paddingBottom="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:text="Show Footpath?"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            />
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:text="Show Step Count?"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:text="Show Date?"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </android.support.wearable.view.WearableListView>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal">
+                    <TextView
+                        android:text="Show Seconds?"
+                        android:textSize="20sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"/>
+                    <CheckBox
+                        android:id="@+id/show_seconds_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:text="Show Date?"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"/>
+                <CheckBox
+                    android:id="@+id/show_date_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:text="Show Footpath?"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"/>
+                <CheckBox
+                    android:id="@+id/show_footpath_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:text="Show Step Count?"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="100dp"
+/>
+                <CheckBox
+                    android:id="@+id/show_stepcount_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 </android.support.wearable.view.BoxInsetLayout>
