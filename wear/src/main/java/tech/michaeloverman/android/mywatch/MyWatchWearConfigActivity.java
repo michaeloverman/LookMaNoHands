@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.wearable.view.BoxInsetLayout;
 import android.support.wearable.view.WearableListView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.widget.TextView;
 
@@ -60,7 +61,7 @@ public class MyWatchWearConfigActivity extends Activity implements
         listView.addOnScrollListener(this);
 
         String[] options = getResources().getStringArray(R.array.config_options_array);
-//        listView.setAdapter(new ConfigOptionsAdapter(options));
+        listView.setAdapter(new ConfigOptionsAdapter(options));
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -136,5 +137,28 @@ public class MyWatchWearConfigActivity extends Activity implements
 
     @Override
     public void onCentralPositionChanged(int i) {
+    }
+
+    private class ConfigOptionsAdapter extends WearableListView.Adapter {
+        private final String[] mOptions;
+
+        public ConfigOptionsAdapter(String[] options) {
+            mOptions = options;
+        }
+
+        @Override
+        public WearableListView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(WearableListView.ViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
     }
 }

@@ -150,7 +150,7 @@ public class MyWatchConfigActivity extends AppCompatActivity
             case "UVA":
                 setButtonColors(R.color.uva_hour, R.color.uva_minute, R.color.uva_second, R.color.uva_footpath);
                 break;
-            case "William & Mary":
+            case "William and Mary":
                 setButtonColors(R.color.wandm_hour, R.color.wandm_minute, R.color.wandm_second, R.color.wandm_footpath);
                 break;
             case "The Ohio State":
@@ -165,11 +165,20 @@ public class MyWatchConfigActivity extends AppCompatActivity
             case "Ithaca College":
                 setButtonColors(R.color.ic_hour, R.color.ic_minute, R.color.ic_second, R.color.ic_footpath);
                 break;
-            case "Cornell":
+            case "Cornell University":
                 setButtonColors(R.color.cornell_hour, R.color.cornell_minute, R.color.cornell_second, R.color.cornell_footpath);
                 break;
             case "Penn State":
                 setButtonColors(R.color.penn_hour, R.color.penn_minute, R.color.penn_second, R.color.penn_footpath);
+                break;
+            case "UCLA":
+                setButtonColors(R.color.ucla_hour, R.color.ucla_minute, R.color.ucla_second, R.color.ucla_footpath);
+                break;
+            case "U Kentucky":
+                setButtonColors(R.color.uky_hour, R.color.uky_minute, R.color.uky_second, R.color.uky_footpath);
+                break;
+            case "U Kansas":
+                setButtonColors(R.color.ku_hour, R.color.ku_minute, R.color.ku_second, R.color.ku_footpath);
                 break;
             case "Nature":
                 setButtonColors(R.color.nature_hour, R.color.nature_minute, R.color.nature_second, R.color.nature_footpath);
@@ -182,6 +191,12 @@ public class MyWatchConfigActivity extends AppCompatActivity
                 break;
             case "Nautical":
                 setButtonColors(R.color.nautical_hour, R.color.nautical_minute, R.color.nautical_second, R.color.nautical_footpath);
+                break;
+            case "Mikah's Colors":
+                setButtonColors(R.color.mikah_hour, R.color.mikah_minute, R.color.mikah_second, R.color.mikah_footpath);
+                break;
+            case "Rachael's Colors":
+                setButtonColors(R.color.rachael_hour, R.color.rachael_minute, R.color.rachael_second, R.color.rachael_footpath);
                 break;
             default:
                 break;

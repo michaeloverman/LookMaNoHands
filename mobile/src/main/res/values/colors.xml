@@ -74,4 +74,25 @@
     <color name="nautical_hour">#002936</color>
     <color name="nautical_second">#f1f3ce</color>
     <color name="nautical_footpath">#f62a00</color>
+    <color name="ucla_hour">#3284bf</color>
+    <color name="ucla_minute">#ffe800</color>
+    <color name="ucla_second">#00a5e5</color>
+    <color name="ucla_footpath">#1e4b87</color>
+    <color name="uky_hour">#005daa</color>
+    <color name="uky_minute">#b9c5dc</color>
+    <color name="uky_second">#6b89b4</color>
+    <color name="uky_footpath">#ffe7a7</color>
+    <color name="ku_hour">#0051ba</color>
+    <color name="ku_minute">#e8000d</color>
+    <color name="ku_second">#ffc82d</color>
+    <color name="ku_footpath">#85898a</color>
+    <color name="mikah_hour">#2afacd</color>
+    <color name="mikah_minute">#fa43a5</color>
+    <color name="mikah_second">#f4fa43</color>
+    <color name="mikah_footpath">#ae1ff0</color>
+    <color name="rachael_hour">#bf5ef7</color>
+    <color name="rachael_minute">#db8cff </color>
+    <color name="rachael_second">#f528fc</color>
+    <color name="rachael_footpath">#fc3030</color>
+
 </resources>
