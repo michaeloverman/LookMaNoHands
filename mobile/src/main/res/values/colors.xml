@@ -94,5 +94,20 @@
     <color name="rachael_minute">#db8cff </color>
     <color name="rachael_second">#f528fc</color>
     <color name="rachael_footpath">#fc3030</color>
-
+    <color name="browns_hour">#af4425</color>
+    <color name="browns_minute">#c9a66b </color>
+    <color name="browns_second">#ebdcb2</color>
+    <color name="browns_footpath">#662e1c</color>
+    <color name="pastels_hour">#c1e1dc</color>
+    <color name="pastels_minute">#ffccac</color>
+    <color name="pastels_second">#ffeb94</color>
+    <color name="pastels_footpath">#fdd475</color>
+    <color name="grays_hour">#867666</color>
+    <color name="grays_minute">#d5c3aa</color>
+    <color name="grays_second">#eae2d6</color>
+    <color name="grays_footpath">#e1b80d</color>
+    <color name="greece_hour">#2f496e</color>
+    <color name="greece_minute">#2988bc</color>
+    <color name="greece_second">#f4eade</color>
+    <color name="greece_footpath">#ed8c72</color>
 </resources>

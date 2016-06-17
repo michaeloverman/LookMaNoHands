@@ -126,7 +126,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         int mMinuteColor;
         int mSecondColor;
         int mFootpathColor;
-        int mDateColor;
+//        int mDateColor;
         private ColorFilter mColorFilter;
         int mBackgroundColor = Color.BLACK;
 
@@ -176,8 +176,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         float[] mFootpathY = new float[] {-250f,  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
         float mStepCountX = mFootpathX[0] + 172;
         float mStepCountY = -mFootpathY[0] - 25;
-        private boolean mShowDate;
-        private String mDateFormat = "MMM d";
+        private boolean mShowDate = true;
+//      private String mDateFormat = "MMM d";
         private boolean mShowStepCount;
 
         @Override
@@ -328,7 +328,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mHoursPaint.setTextSize(mTextSize);
             mMinutesPaint.setTextSize(mTextSize * 0.5f);
             mSecondsPaint.setTextSize(mTextSize * 0.3f);
-            mStepCountPaint.setTextSize(15f);
+            mStepCountPaint.setTextSize(17f);
             mDatePaint.setTextSize(mTextSize * 0.15f);
         }
 
@@ -440,16 +440,6 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
             if (!mAmbient) {
         //        if (DEBUG) System.out.println("...not in Ambient()");
-                if(mShowSeconds) {
-                    int secondsInt = mTime.get(Calendar.SECOND);
-                    String second = String.format("%02d", secondsInt);
-                    float secondRot = (float) (secondsInt * Math.PI * 2 / 60);
-                    float secondX = (float) ((mCenterX + (Math.sin(secondRot) * mSecondRadius))
-                            - (0.5 * mSecondsPaint.measureText(second)));
-                    float secondY = (float) ((mCenterY + (-Math.cos(secondRot) * mSecondRadius))
-                            + (0.4 * mSecondsPaint.getTextSize()));
-                    canvas.drawText(second, secondX, secondY, mSecondsPaint);
-                }
         //        if (DEBUG) System.out.println("mShowFootpath = " + mShowFootpath);
                 if(mShowFootpath) {
                     //getTotalSteps();
@@ -491,7 +481,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                         if (numFeet < 12) {
                             canvas.drawText(mStepCount + "", x + 35, y + 20, mStepCountPaint);
                         } else {
-                            canvas.drawText(mStepCount + "", x - 18, y + 4, mStepCountPaint);
+                            canvas.drawText(mStepCount + "", x - 33, y + 4, mStepCountPaint);
                         }
                         //            if (DEBUG) System.out.println("Just printed " + mStepCount + " steps");
                     }
@@ -508,6 +498,18 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             }
 
             canvas.drawText(minute, minuteX, minuteY, mMinutesPaint);
+
+            if(mShowSeconds && !isInAmbientMode()) {
+                int secondsInt = mTime.get(Calendar.SECOND);
+                String second = String.format("%02d", secondsInt);
+                float secondRot = (float) (secondsInt * Math.PI * 2 / 60);
+                float secondX = (float) ((mCenterX + (Math.sin(secondRot) * mSecondRadius))
+                        - (0.5 * mSecondsPaint.measureText(second)));
+                float secondY = (float) ((mCenterY + (-Math.cos(secondRot) * mSecondRadius))
+                        + (0.4 * mSecondsPaint.getTextSize()));
+                canvas.drawText(second, secondX, secondY, mSecondsPaint);
+            }
+
             if (mShowDate && !isInAmbientMode()) {
 
                 //SimpleDateFormat dateFormat = new SimpleDateFormat(mDateFormat);

@@ -195,6 +195,18 @@ public class MyWatchConfigActivity extends AppCompatActivity
             case "Mikah's Colors":
                 setButtonColors(R.color.mikah_hour, R.color.mikah_minute, R.color.mikah_second, R.color.mikah_footpath);
                 break;
+            case "Browns":
+                setButtonColors(R.color.browns_hour, R.color.browns_minute, R.color.browns_second, R.color.browns_footpath);
+                break;
+            case "Pastels":
+                setButtonColors(R.color.pastels_hour, R.color.pastels_minute, R.color.pastels_second, R.color.pastels_footpath);
+                break;
+            case "Grays":
+                setButtonColors(R.color.grays_hour, R.color.grays_minute, R.color.grays_second, R.color.grays_footpath);
+                break;
+            case "Greece":
+                setButtonColors(R.color.greece_hour, R.color.greece_minute, R.color.greece_second, R.color.greece_footpath);
+                break;
             case "Rachael's Colors":
                 setButtonColors(R.color.rachael_hour, R.color.rachael_minute, R.color.rachael_second, R.color.rachael_footpath);
                 break;

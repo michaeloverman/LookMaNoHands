@@ -1,9 +1,7 @@
 package tech.michaeloverman.android.mywatch;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
+import android.support.v7.app.AppCompatActivity;
 
 public class MyWatchActivity extends AppCompatActivity {
 
@@ -14,7 +12,4 @@ public class MyWatchActivity extends AppCompatActivity {
     }
 
 
-    void hourButtonClicked(View v) {
-        Toast.makeText(MyWatchActivity.this, "Hour Button Clicked", Toast.LENGTH_SHORT).show();
-    }
 }

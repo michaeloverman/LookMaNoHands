@@ -26,9 +26,13 @@ public class MyWatchWearConfigActivity extends Activity implements
 
     private GoogleApiClient mGoogleApiClient;
     private boolean mShowSeconds;
+    private boolean mSecondsChanged = false;
     private boolean mShowDate;
+    private boolean mDateChanged = false;
     private boolean mShowFootpath;
+    private boolean mFootpathChanged = false;
     private boolean mShowStepCount;
+    private boolean mStepCountChanged = false;
     private CheckBox mSecondsCheck, mDateCheck, mFootpathCheck, mStepcountCheck;
 
     private TextView mHeader;
@@ -106,11 +110,11 @@ public class MyWatchWearConfigActivity extends Activity implements
     private void sendParamsAndFinish() {
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create("/watch_face_config_nohands");
         DataMap dataMap = putDataMapRequest.getDataMap();
-        dataMap.putBoolean("show_seconds", mShowSeconds);
-        dataMap.putBoolean("show_stepcount", mShowStepCount);
-        dataMap.putBoolean("show_footpath", mShowFootpath);
-        dataMap.putBoolean("show_date", mShowDate);
-        dataMap.putInt("stepcount_goal", mStepCountGoal);
+        if (mSecondsChanged) dataMap.putBoolean("show_seconds", mShowSeconds);
+        if (mStepCountChanged) dataMap.putBoolean("show_stepcount", mShowStepCount);
+        if (mFootpathChanged) dataMap.putBoolean("show_footpath", mShowFootpath);
+        if (mDateChanged) dataMap.putBoolean("show_date", mShowDate);
+//        dataMap.putInt("stepcount_goal", mStepCountGoal);
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest);
@@ -152,12 +156,16 @@ public class MyWatchWearConfigActivity extends Activity implements
         Boolean state = choice.isChecked();
         if (mSecondsCheck.equals(choice)) {
             mShowSeconds = state;
+            mSecondsChanged = true;
         } else if (mDateCheck.equals(choice)) {
             mShowDate = state;
+            mDateChanged = true;
         } else if (mFootpathCheck.equals(choice)) {
             mShowFootpath = state;
+            mFootpathChanged = true;
         } else if (mStepcountCheck.equals(choice)) {
             mShowStepCount = state;
+            mStepCountChanged = true;
         }
     }
 
