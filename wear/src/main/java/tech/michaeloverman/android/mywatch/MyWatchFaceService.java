@@ -354,21 +354,6 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         public void onAmbientModeChanged(boolean inAmbientMode) {
         //    if (DEBUG) System.out.println("onAmbientModeChanged() = " + inAmbientMode);
             super.onAmbientModeChanged(inAmbientMode);
-/*            if (mAmbient != inAmbientMode) {
-                mAmbient = inAmbientMode;
-                if (mLowBitAmbient) {
-                    mHoursPaint.setAntiAlias(!inAmbientMode);
-                    mMinutesPaint.setAntiAlias(!inAmbientMode);
-                }
-//                mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour));
-//                mMinutesPaint.setColor(getResources().getColor(R.color.ambient_minute));
-
-            } //else {
-               // mAmbient =  inAmbientMode;
-               // mHoursPaint.setColor(getResources().getColor(R.color.hour_text));
-              //  mMinutesPaint.setColor(getResources().getColor(R.color.minute_text));
-
-          //  }*/
 
             mAmbient = inAmbientMode;
             updateColorsAndSteps();
@@ -480,8 +465,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                         //String stepsString = mStepCount + "";
                         if (numFeet < 12) {
                             canvas.drawText(mStepCount + "", x + 35, y + 20, mStepCountPaint);
-                        } else {
+                        } else if (numFeet < 16){
                             canvas.drawText(mStepCount + "", x - 33, y + 4, mStepCountPaint);
+                        } else {
+                            canvas.drawText(mStepCount + "", 278 - mStepCountPaint.measureText(mStepCount + ""), 83, mStepCountPaint);
                         }
                         //            if (DEBUG) System.out.println("Just printed " + mStepCount + " steps");
                     }

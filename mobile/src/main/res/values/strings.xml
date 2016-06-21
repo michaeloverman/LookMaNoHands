@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Look Ma, No Hands! Settings</string>
     <string name="mywatch_config">Options</string>
-    <string name="no_connected_device">Wearable Device Not Connected!</string>
+    <string name="no_connected_device">Wearable Device Not Connected! Too Bad...</string>
     <string name="ok_button_label">OK</string>
     <string name="mywatch_config_hours">Hours</string>
     <string name="color_red">Red</string>
@@ -66,22 +66,6 @@
 
     <string-array name="color_scheme_entries">
         <item>Custom</item>
-        <item>WVU</item>
-        <item>Northwestern</item>
-        <item>JMU</item>
-        <item>Clemson</item>
-        <item>Virginia Tech</item>
-        <item>UVA</item>
-        <item>William and Mary</item>
-        <item>The Ohio State</item>
-        <item>Alabama</item>
-        <item>Harvard</item>
-        <item>Ithaca College</item>
-        <item>Cornell University</item>
-        <item>Penn State</item>
-        <item>UCLA</item>
-        <item>U Kentucky</item>
-        <item>U Kansas</item>
         <item>Nature</item>
         <item>Fresh</item>
         <item>Icy</item>
@@ -92,5 +76,21 @@
         <item>Pastels</item>
         <item>Mikah\'s Colors</item>
         <item>Rachael\'s Colors</item>
+        <item>Alabama</item>
+        <item>Clemson</item>
+        <item>Cornell University</item>
+        <item>Harvard</item>
+        <item>Ithaca College</item>
+        <item>JMU</item>
+        <item>Northwestern</item>
+        <item>The Ohio State</item>
+        <item>Penn State</item>
+        <item>UCLA</item>
+        <item>U Kansas</item>
+        <item>U Kentucky</item>
+        <item>UVA</item>
+        <item>Virginia Tech</item>
+        <item>WVU</item>
+        <item>William and Mary</item>
     </string-array>
 </resources>
