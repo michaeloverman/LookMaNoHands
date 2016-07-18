@@ -501,7 +501,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
                 //SimpleDateFormat dateFormat = new SimpleDateFormat(mDateFormat);
                 String dateString = mTime.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.US)
-                        + ", " + mTime.get(Calendar.DAY_OF_MONTH);
+                        + " " + mTime.get(Calendar.DAY_OF_MONTH);
                 float x = mCenterX - (mDatePaint.measureText(dateString) / 2f);
                 canvas.drawText(dateString, x, 300, mDatePaint);
             }
