@@ -1,4 +1,4 @@
-package tech.michaeloverman.android.mywatch;
+package tech.michaeloverman.android.nohands;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -114,7 +114,6 @@ public class MyWatchWearConfigActivity extends Activity implements
         if (mStepCountChanged) dataMap.putBoolean("show_stepcount", mShowStepCount);
         if (mFootpathChanged) dataMap.putBoolean("show_footpath", mShowFootpath);
         if (mDateChanged) dataMap.putBoolean("show_date", mShowDate);
-//        dataMap.putInt("stepcount_goal", mStepCountGoal);
 
         PutDataRequest putDataRequest = putDataMapRequest.asPutDataRequest();
         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest);
@@ -122,33 +121,6 @@ public class MyWatchWearConfigActivity extends Activity implements
         finish();
     }
 
-/*
-    @Override
-    public void onClick(WearableListView.ViewHolder viewHolder) {
-
-    }
-
-    @Override
-    public void onTopEmptyRegionClick() {
-    }
-
-    @Override
-    public void onScroll(int i) {
-    }
-
-    @Override
-    public void onAbsoluteScrollChange(int i) {
-
-    }
-
-    @Override
-    public void onScrollStateChanged(int i) {
-    }
-
-    @Override
-    public void onCentralPositionChanged(int i) {
-    }
-*/
 
     @Override
     public void onClick(View v) {

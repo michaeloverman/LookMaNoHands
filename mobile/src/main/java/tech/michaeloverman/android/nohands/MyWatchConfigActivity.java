@@ -1,11 +1,13 @@
-package tech.michaeloverman.android.mywatch;
+package tech.michaeloverman.android.nohands;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
 import android.support.wearable.companion.WatchFaceCompanion;
 import android.view.View;
@@ -117,13 +119,37 @@ public class MyWatchConfigActivity extends AppCompatActivity
             }
         });
 
+        View.OnClickListener colorClick = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                colorButtonClicked(v);
+            }
+        };
+
         mHourButton = (Button) findViewById(R.id.hours_color_button);
+        mHourButton.setOnClickListener(colorClick);
         mMinuteButton = (Button) findViewById(R.id.minutes_color_button);
+        mMinuteButton.setOnClickListener(colorClick);
         mSecondsButton = (Button) findViewById(R.id.seconds_color_button);
+        mSecondsButton.setOnClickListener(colorClick);
         mFootpathButton = (Button) findViewById(R.id.footpath_color_button);
+        mFootpathButton.setOnClickListener(colorClick);
 
         mOkButton = (Button) findViewById(R.id.okay_button);
+        mOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                okButtonClicked(v);
+            }
+        });
+
         mCancelButton = (Button) findViewById(R.id.cancel_button);
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelButtonClicked(v);
+            }
+        });
 
     }
 
@@ -279,9 +305,6 @@ public class MyWatchConfigActivity extends AppCompatActivity
                     DataItem item = event.getDataItem();
                     updateParamsForDataItem(item);
                 }
-
-                // set defaults on view items
-
             }
 
             dataEventBuffer.release();
@@ -416,5 +439,10 @@ public class MyWatchConfigActivity extends AppCompatActivity
     }
     public void cancelButtonClicked(View v) {
         sendParamsAndFinish();
+    }
+
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
  }

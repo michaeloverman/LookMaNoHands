@@ -1,4 +1,4 @@
-package tech.michaeloverman.android.mywatch;
+package tech.michaeloverman.android.nohands;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

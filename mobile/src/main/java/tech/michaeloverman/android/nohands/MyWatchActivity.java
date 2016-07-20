@@ -1,4 +1,4 @@
-package tech.michaeloverman.android.mywatch;
+package tech.michaeloverman.android.nohands;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

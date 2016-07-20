@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="tech.michaeloverman.android.mywatch" >
+    package="tech.michaeloverman.android.nohands" >
 
     <uses-feature android:name="android.hardware.type.watch" />
 
@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault" >
         <service
-            android:name=".MyWatchFaceService"
+            android:name="tech.michaeloverman.android.nohands.MyWatchFaceService"
             android:label="@string/my_digital_name"
             android:allowEmbedded="true"
             android:taskAffinity=""
@@ -39,7 +39,7 @@
                 <category android:name="com.google.android.wearable.watchface.category.WATCH_FACE" />
             </intent-filter>
         </service>
-        <activity android:name=".MyWatchWearConfigActivity"
+        <activity android:name="tech.michaeloverman.android.nohands.MyWatchWearConfigActivity"
                   android:label="No Hands Wear">
             <intent-filter>
                 <action android:name="tech.michaeloverman.android.mywatch.CONFIG_NOHANDS" />
