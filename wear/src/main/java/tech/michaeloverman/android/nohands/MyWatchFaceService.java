@@ -83,8 +83,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
 
     private static final Typeface HOUR_TYPEFACE =
             Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
-    private static final Typeface MINUTE_TYPEFACE = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
-    private static final Typeface DATE_TYPEFACE = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
+    private static final Typeface MIN_SEC_DATE_TYPEFACE = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
 
     /**
      * Update rate in milliseconds for interactive mode. We update once a second since seconds are
@@ -122,10 +121,10 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         Paint mMinutesPaint;
         Paint mSecondsPaint;
         Paint mDatePaint;
-        int mHourColor;
-        int mMinuteColor;
-        int mSecondColor;
-        int mFootpathColor;
+        int mHourColor = R.color.clemson_hour_text;
+        int mMinuteColor = R.color.clemson_minute_text;
+        int mSecondColor = R.color.clemson_minute_text;
+        int mFootpathColor = R.color.clemson_hour_text;
         private ColorFilter mColorFilter;
         int mBackgroundColor = Color.BLACK;
 
@@ -143,13 +142,13 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             }
         };
 
-        float mXOffset;
-        float mYOffset;
+//     0at mYOffset;
         float mCenterX;
         float mCenterY;
         float mHourRadius;
         float mMinuteRadius;
         float mSecondRadius;
+        float mDateRadius;
         boolean mShowSeconds;
         boolean mShowFootpath;
         float mTextSize;
@@ -168,12 +167,13 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
         private int mStepsPerFoot;
         float[] mFootpathX = new float[] {   7f, 25f,  5f, 25f, 15f, 22f, 20f, 20f, 16f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f };
         float[] mFootpathY = new float[] {-250f,  5f, 25f,  5f, 25f,-15f, 15f,-15f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f, 25f,  5f };
-        float mStepCountX = mFootpathX[0] + 172;
-        float mStepCountY = -mFootpathY[0] - 25;
+//        float mStepCountX = mFootpathX[0] + 172;
+//        float mStepCountY = -mFootpathY[0] - 25;
         private boolean mShowDate = true;
         private boolean mShowStepCount;
 
         @Override
+        @TargetApi(Build.VERSION_CODES.M)
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
 
@@ -197,7 +197,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                     .build();
 
             Resources resources = MyWatchFaceService.this.getResources();
-            mYOffset = resources.getDimension(R.dimen.digital_y_offset);
+//            mYOffset = resources.getDimension(R.dimen.digital_y_offset);
 
             mBackgroundPaint = new Paint();
             mBackgroundPaint.setColor(mBackgroundColor);
@@ -207,18 +207,18 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mHoursPaint.setLetterSpacing(-0.15f);
 
             mMinutesPaint = new Paint();
-            mMinutesPaint = createTextPaint(mMinuteColor, MINUTE_TYPEFACE);
+            mMinutesPaint = createTextPaint(mMinuteColor, MIN_SEC_DATE_TYPEFACE);
 
             mSecondsPaint = new Paint();
-            mSecondsPaint.setColor(mSecondColor);
+            mSecondsPaint = createTextPaint(mSecondColor, MIN_SEC_DATE_TYPEFACE);
 
             mDatePaint = new Paint();
-            mDatePaint = createTextPaint(Color.WHITE, DATE_TYPEFACE);
+            mDatePaint = createTextPaint(Color.WHITE, MIN_SEC_DATE_TYPEFACE);
 
             mTime = new GregorianCalendar();
 
             mStepCountPaint = new Paint();
-            mStepCountPaint = createTextPaint(Color.WHITE, MINUTE_TYPEFACE);
+            mStepCountPaint = createTextPaint(Color.WHITE, MIN_SEC_DATE_TYPEFACE);
 
             mStepsRequested = false;
 
@@ -231,7 +231,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mRightFootHorz = ( (BitmapDrawable) mRightHorzDrawable).getBitmap();
             mLeftFootHorz = ( (BitmapDrawable) mLeftHorzDrawable).getBitmap();
             mFootpathPaint = new Paint();
-            mColorFilter = new PorterDuffColorFilter(mFootpathColor, PorterDuff.Mode.SRC_IN);
+            mColorFilter = new PorterDuffColorFilter(getResources().getColor(mFootpathColor, null), PorterDuff.Mode.SRC_IN);
             mFootpathPaint.setColorFilter(mColorFilter);
             mStepsPerFoot = mStepCountGoal / mFootpathX.length;
 
@@ -304,8 +304,8 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             // Load resources that have alternate values for round watches.
             Resources resources = MyWatchFaceService.this.getResources();
             boolean isRound = insets.isRound();
-            mXOffset = resources.getDimension(isRound
-                    ? R.dimen.digital_x_offset_round : R.dimen.digital_x_offset);
+//            mXOffset = resources.getDimension(isRound
+//                    ? R.dimen.digital_x_offset_round : R.dimen.digital_x_offset);
             mTextSize = resources.getDimension(isRound
                     ? R.dimen.digital_text_size_round : R.dimen.digital_text_size);
 
@@ -345,16 +345,24 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             updateTimer();
         }
 
-        @TargetApi(Build.VERSION_CODES.M)
         private void updateColorsAndSteps() {
             if (isInAmbientMode()) {
-                mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour, null));
+                mHoursPaint.setColor(getResources().getColor(R.color.ambient_hour));
                 mHoursPaint.setStyle(Paint.Style.STROKE);
-                mMinutesPaint.setColor(getResources().getColor(R.color.ambient_minute, null));
+                mMinutesPaint.setColor(getResources().getColor(R.color.ambient_minute));
+                if (mLowBitAmbient) {
+                    mHoursPaint.setAntiAlias(false);
+                    mMinutesPaint.setAntiAlias(false);
+                }
             } else {
+                // AndroidStudio is showing an error here, calling the color, but it works...???
                 mHoursPaint.setColor(mHourColor);
                 mHoursPaint.setStyle(Paint.Style.FILL);
                 mMinutesPaint.setColor(mMinuteColor);
+                if (mLowBitAmbient) {
+                    mHoursPaint.setAntiAlias(true);
+                    mMinutesPaint.setAntiAlias(true);
+                }
                 getTotalSteps();
             }
         }
@@ -460,7 +468,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 String dateString = mTime.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.US)
                         + " " + mTime.get(Calendar.DAY_OF_MONTH);
                 float x = mCenterX - (mDatePaint.measureText(dateString) / 2f);
-                canvas.drawText(dateString, x, 300, mDatePaint);
+                canvas.drawText(dateString, x, mCenterY + mDateRadius, mDatePaint);
             }
 
         }
@@ -519,6 +527,7 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
             mHourRadius = (float) (mCenterX * 0.65);
             mMinuteRadius = (float) (mCenterX * 0.60);
             mSecondRadius = (float) (mCenterX * 0.50);
+            mDateRadius = (float) (mCenterY * 0.70);
         }
 
         @Override
@@ -573,9 +582,11 @@ public class MyWatchFaceService extends CanvasWatchFaceService {
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                 if (dataMap.containsKey("hour_color")) {
                     mHourColor = dataMap.getInt("hour_color");
+                    mHoursPaint.setColor(mHourColor);
                 }
                 if (dataMap.containsKey("minute_color")) {
-                    mMinuteColor= dataMap.getInt("minute_color");
+                    mMinuteColor = dataMap.getInt("minute_color");
+                    mMinutesPaint.setColor(mMinuteColor);
                 }
                 if (dataMap.containsKey("seconds_color")) {
                     mSecondColor = dataMap.getInt("seconds_color");
